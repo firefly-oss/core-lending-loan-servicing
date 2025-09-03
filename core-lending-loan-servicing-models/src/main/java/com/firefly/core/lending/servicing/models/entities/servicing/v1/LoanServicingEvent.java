@@ -11,6 +11,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -21,10 +22,10 @@ public class LoanServicingEvent {
 
     @Id
     @Column("loan_servicing_event_id")
-    private Long loanServicingEventId;
+    private UUID loanServicingEventId;
 
     @Column("loan_servicing_case_id")
-    private Long loanServicingCaseId;
+    private UUID loanServicingCaseId;
 
     @Column("event_type")
     private EventTypeEnum eventType;

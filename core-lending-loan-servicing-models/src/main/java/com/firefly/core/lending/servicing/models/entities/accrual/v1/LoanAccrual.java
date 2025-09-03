@@ -12,6 +12,7 @@ import org.springframework.data.relational.core.mapping.Table;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -22,10 +23,10 @@ public class LoanAccrual {
 
     @Id
     @Column("loan_accrual_id")
-    private Long loanAccrualId;
+    private UUID loanAccrualId;
 
     @Column("loan_servicing_case_id")
-    private Long loanServicingCaseId;
+    private UUID loanServicingCaseId;
 
     @Column("accrual_amount")
     private BigDecimal accrualAmount;

@@ -12,6 +12,7 @@ import org.springframework.data.relational.core.mapping.Table;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -22,10 +23,10 @@ public class LoanRateChange {
 
     @Id
     @Column("loan_rate_change_id")
-    private Long loanRateChangeId;
+    private UUID loanRateChangeId;
 
     @Column("loan_servicing_case_id")
-    private Long loanServicingCaseId;
+    private UUID loanServicingCaseId;
 
     @Column("old_interest_rate")
     private BigDecimal oldInterestRate;

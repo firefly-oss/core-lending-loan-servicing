@@ -12,6 +12,7 @@ import org.springframework.data.relational.core.mapping.Table;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -22,16 +23,16 @@ public class LoanServicingCase {
 
     @Id
     @Column("loan_servicing_case_id")
-    private Long loanServicingCaseId;
+    private UUID loanServicingCaseId;
 
     @Column("contract_id")
-    private Long contractId;
+    private UUID contractId;
 
     @Column("product_id")
-    private Long productId;
+    private UUID productId;
 
     @Column("account_id")
-    private Long accountId;
+    private UUID accountId;
 
     @Column("servicing_status")
     private ServicingStatusEnum servicingStatus;
