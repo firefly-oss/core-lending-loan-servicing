@@ -1,136 +1,434 @@
 # Core Lending Loan Servicing Microservice
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://openjdk.java.net/projects/jdk/21/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-green.svg)](https://spring.io/projects/spring-boot)
+
 ## Overview
 
-The Core Lending Loan Servicing Microservice is a critical component of the Firefly platform, responsible for managing loan servicing operations. This service handles various aspects of loan management after disbursement, including repayment tracking, loan servicing case management, rate changes, and other loan servicing events.
+The **Core Lending Loan Servicing Microservice** is a critical component of the **Firefly OpenCore Banking Platform**, developed by **Firefly Software Solutions Inc** under the Apache 2.0 license. This microservice is responsible for comprehensive loan servicing operations after loan origination and disbursement.
+
+This service provides a complete loan lifecycle management system, handling everything from disbursements and repayment schedules to interest accruals, rate changes, and servicing events. It's designed with reactive programming principles using Spring WebFlux and R2DBC for high-performance, non-blocking operations.
+
+**Organization**: [firefly-oss](https://github.com/firefly-oss)
+**Website**: [getfirefly.io](https://getfirefly.io)
+**License**: Apache 2.0
 
 ## Architecture
 
-The microservice follows a modular architecture with clear separation of concerns:
+The microservice follows a clean, modular architecture with clear separation of concerns across multiple Maven modules:
 
-### Components
+### Module Structure
 
-- **core-lending-loan-servicing-interfaces**: Contains DTOs, interfaces, enums, and API definitions
-- **core-lending-loan-servicing-models**: Contains data models, entities, and repositories for database access
-- **core-lending-loan-servicing-core**: Contains business logic, service implementations, and mappers
-- **core-lending-loan-servicing-web**: Contains web controllers, REST endpoints, and application configuration
+- **`core-lending-loan-servicing-interfaces`**: Contains DTOs, interfaces, enums, and API contracts
+- **`core-lending-loan-servicing-models`**: Contains JPA entities, repositories, and database migrations
+- **`core-lending-loan-servicing-core`**: Contains business logic, service implementations, and mappers
+- **`core-lending-loan-servicing-web`**: Contains REST controllers, web configuration, and application entry point
+- **`core-lending-loan-servicing-sdk`**: Contains generated client SDK for external integrations
 
-### Key Features
+### Core Capabilities
 
-- Loan servicing case management
-- Loan repayment tracking and scheduling
-- Loan disbursement processing
-- Loan rate change management
-- Loan servicing event tracking
+- **Loan Servicing Case Management**: Central management of loan servicing lifecycle
+- **Disbursement Tracking**: Complete disbursement history and final disbursement tracking
+- **Repayment Management**: Scheduled repayments and actual payment records
+- **Interest & Fee Accruals**: Automated calculation and tracking of interest, penalties, and fees
+- **Rate Change Management**: Interest rate adjustments with full audit trail
+- **Servicing Events**: Comprehensive event tracking for restructures, extensions, and collections
 
-## Technologies
+## Technology Stack
 
-- **Java 21**: Core programming language
-- **Spring Boot**: Application framework
-- **Spring WebFlux**: Reactive web framework
-- **R2DBC**: Reactive Relational Database Connectivity for database access
-- **Maven**: Dependency management and build tool
-- **Docker**: Containerization
-- **OpenAPI/Swagger**: API documentation
-- **Reactor**: Reactive programming library
+- **Java 21**: Latest LTS version with virtual threads support
+- **Spring Boot 3.x**: Modern Spring framework with native compilation support
+- **Spring WebFlux**: Reactive web framework for non-blocking I/O
+- **R2DBC**: Reactive database connectivity for PostgreSQL
+- **PostgreSQL**: Primary database with advanced features
+- **Flyway**: Database migration and versioning
+- **Maven**: Build automation and dependency management
+- **OpenAPI 3**: API documentation and client generation
+- **MapStruct**: Type-safe bean mapping
+- **Lombok**: Boilerplate code reduction
+- **Docker**: Containerization and deployment
+
+## Data Model
+
+The microservice manages a comprehensive loan servicing data model with the following core entities:
+
+### Entity Relationship Diagram
+
+```mermaid
+erDiagram
+    LoanServicingCase ||--o{ LoanDisbursement : "has many"
+    LoanServicingCase ||--o{ LoanRepaymentSchedule : "has many"
+    LoanServicingCase ||--o{ LoanRepaymentRecord : "has many"
+    LoanServicingCase ||--o{ LoanAccrual : "has many"
+    LoanServicingCase ||--o{ LoanRateChange : "has many"
+    LoanServicingCase ||--o{ LoanServicingEvent : "has many"
+    LoanRepaymentSchedule ||--o{ LoanRepaymentRecord : "linked to"
+
+    LoanServicingCase {
+        UUID loan_servicing_case_id PK
+        UUID contract_id FK "Reference to loan contract"
+        UUID product_id FK "Reference to loan product"
+        UUID account_id FK "Reference to customer account"
+        ServicingStatusEnum servicing_status "ACTIVE, PAID_OFF, CLOSED, DEFAULT, RESTRUCTURED"
+        DECIMAL principal_outstanding "Outstanding principal amount"
+        DECIMAL interest_outstanding "Outstanding interest amount"
+        DECIMAL fees_outstanding "Outstanding fees amount"
+        DATE origination_date "Loan origination date"
+        DATE maturity_date "Loan maturity date"
+        TEXT remarks "Additional notes"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    LoanDisbursement {
+        UUID loan_disbursement_id PK
+        UUID loan_servicing_case_id FK
+        UUID transaction_id FK "Reference to transaction"
+        DECIMAL disbursement_amount "Amount disbursed"
+        DATE disbursement_date "Date of disbursement"
+        BOOLEAN is_final_disbursement "Final disbursement flag"
+        TEXT note "Disbursement notes"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    LoanRepaymentSchedule {
+        UUID loan_repayment_schedule_id PK
+        UUID loan_servicing_case_id FK
+        INTEGER installment_number "Installment sequence number"
+        DATE due_date "Payment due date"
+        DECIMAL principal_due "Principal amount due"
+        DECIMAL interest_due "Interest amount due"
+        DECIMAL fee_due "Fee amount due"
+        DECIMAL total_due "Total amount due"
+        BOOLEAN is_paid "Payment status"
+        DATE paid_date "Date payment was made"
+        DECIMAL paid_amount "Amount actually paid"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    LoanRepaymentRecord {
+        UUID loan_repayment_record_id PK
+        UUID loan_servicing_case_id FK
+        UUID loan_repayment_schedule_id FK "Optional link to schedule"
+        UUID transaction_id FK "Reference to transaction"
+        DECIMAL payment_amount "Payment amount"
+        DATE payment_date "Date of payment"
+        BOOLEAN is_partial_payment "Partial payment flag"
+        TEXT note "Payment notes"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    LoanAccrual {
+        UUID loan_accrual_id PK
+        UUID loan_servicing_case_id FK
+        DECIMAL accrual_amount "Accrued amount"
+        AccrualTypeEnum accrual_type "INTEREST, PENALTY, LATE_FEE, SERVICING_FEE"
+        DATE accrual_date "Date of accrual"
+        TEXT note "Accrual notes"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    LoanRateChange {
+        UUID loan_rate_change_id PK
+        UUID loan_servicing_case_id FK
+        DECIMAL old_interest_rate "Previous interest rate"
+        DECIMAL new_interest_rate "New interest rate"
+        DATE effective_date "Rate change effective date"
+        ReasonCodeEnum reason_code "INDEX_ADJUSTMENT, RENEGOTIATION, PENALTY, PROMOTION"
+        TEXT note "Rate change notes"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    LoanServicingEvent {
+        UUID loan_servicing_event_id PK
+        UUID loan_servicing_case_id FK
+        EventTypeEnum event_type "RESTRUCTURE, EXTENSION, DEFERMENT, COLLECTION_CALL, NOTICE"
+        DATE event_date "Date of event"
+        TEXT description "Event description"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+```
 
 ## Prerequisites
 
-- Java Development Kit (JDK) 21
-- Maven 3.8+
-- Docker (for containerized deployment)
-- Access to the Firefly platform infrastructure
+- **Java Development Kit (JDK) 21** or higher
+- **Maven 3.8+** for build management
+- **PostgreSQL 13+** for database
+- **Docker** (optional, for containerized deployment)
+- **Git** for version control
 
 ## Setup and Installation
 
 ### Local Development
 
-1. Clone the repository:
+1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-organization/firefly-oss.git
-   cd firefly-oss/core-lending-loan-servicing
+   git clone git@github.com:firefly-oss/core-lending-loan-servicing.git
+   cd core-lending-loan-servicing
    ```
 
-2. Build the project:
+2. **Set up environment variables:**
+   ```bash
+   export DB_HOST=localhost
+   export DB_PORT=5432
+   export DB_NAME=loan_servicing
+   export DB_USERNAME=your_username
+   export DB_PASSWORD=your_password
+   export DB_SSL_MODE=disable
+   ```
+
+3. **Build the project:**
    ```bash
    mvn clean install
    ```
 
-3. Run the application:
+4. **Run the application:**
    ```bash
    mvn spring-boot:run -pl core-lending-loan-servicing-web
    ```
 
-4. The application will be available at http://localhost:8080
+5. **Access the application:**
+   - Application: http://localhost:8080
+   - API Documentation: http://localhost:8080/swagger-ui.html
+   - Health Check: http://localhost:8080/actuator/health
 
 ### Docker Deployment
 
-1. Build the Docker image:
+1. **Build the application:**
    ```bash
    mvn clean package
-   docker build -t core-lending-loan-servicing:latest .
    ```
 
-2. Run the Docker container:
+2. **Build Docker image:**
    ```bash
-   docker run -p 8080:8080 core-lending-loan-servicing:latest
+   docker build -t firefly/core-lending-loan-servicing:latest .
+   ```
+
+3. **Run with Docker Compose:**
+   ```bash
+   docker-compose up -d
    ```
 
 ## API Documentation
 
-The API documentation is available through Swagger UI when the application is running:
+The microservice provides comprehensive REST APIs documented with OpenAPI 3.0:
 
-- Local: http://localhost:8080/swagger-ui.html
-- Development: http://core.catalis.vc/loan-servicing/swagger-ui.html
+- **Local Environment**: http://localhost:8080/swagger-ui.html
+- **Development Environment**: http://core.catalis.vc/loan-servicing/swagger-ui.html
+
+### API Endpoints Overview
+
+| Resource | Base Path | Description |
+|----------|-----------|-------------|
+| Loan Servicing Cases | `/api/v1/loan-servicing-cases` | Main loan servicing case management |
+| Disbursements | `/api/v1/loan-servicing-cases/{caseId}/disbursements` | Loan disbursement operations |
+| Repayment Schedules | `/api/v1/loan-servicing-cases/{caseId}/repayment-schedules` | Payment schedule management |
+| Repayment Records | `/api/v1/loan-servicing-cases/{caseId}/repayment-records` | Actual payment tracking |
+| Accruals | `/api/v1/loan-servicing-cases/{caseId}/accruals` | Interest and fee accruals |
+| Rate Changes | `/api/v1/loan-servicing-cases/{caseId}/rate-changes` | Interest rate modifications |
+| Servicing Events | `/api/v1/loan-servicing-cases/{caseId}/events` | Loan servicing event tracking |
 
 ## Development Guidelines
 
-### Code Structure
+### Project Structure
 
-- Follow the modular architecture pattern
-- Keep business logic in the core module
-- Define interfaces in the interfaces module
-- Keep database entities in the models module
-- Implement REST controllers in the web module
+The microservice follows a clean architecture pattern with clear module boundaries:
+
+```
+core-lending-loan-servicing/
+├── core-lending-loan-servicing-interfaces/    # DTOs, Enums, API Contracts
+│   ├── src/main/java/.../dtos/                # Data Transfer Objects
+│   ├── src/main/java/.../enums/               # Enumeration types
+│   └── src/test/java/.../validation/          # DTO validation tests
+├── core-lending-loan-servicing-models/        # Entities, Repositories, Migrations
+│   ├── src/main/java/.../entities/            # JPA entities
+│   ├── src/main/java/.../repositories/        # R2DBC repositories
+│   └── src/main/resources/db/migration/       # Flyway migrations
+├── core-lending-loan-servicing-core/          # Business Logic, Services
+│   ├── src/main/java/.../services/            # Service implementations
+│   ├── src/main/java/.../mappers/             # MapStruct mappers
+│   └── src/test/java/.../services/            # Service tests
+├── core-lending-loan-servicing-web/           # REST Controllers, Configuration
+│   ├── src/main/java/.../controllers/         # REST endpoints
+│   ├── src/main/java/.../config/              # Spring configuration
+│   ├── src/main/resources/application.yaml    # Application configuration
+│   └── src/test/java/.../controllers/         # Controller tests
+└── core-lending-loan-servicing-sdk/           # Generated Client SDK
+    └── src/gen/java/                          # Generated client code
+```
 
 ### Coding Standards
 
-- Follow Java coding conventions
-- Use reactive programming patterns with Reactor
-- Write unit tests for all business logic
-- Document public APIs with OpenAPI annotations
-- Use DTOs for data transfer between layers
+- **Java 21 Features**: Utilize modern Java features including virtual threads, pattern matching, and records
+- **Reactive Programming**: Use Project Reactor for non-blocking, asynchronous operations
+- **Validation**: All DTOs include comprehensive Jakarta validation annotations
+- **Documentation**: Document all public APIs with OpenAPI 3.0 annotations
+- **Testing**: Maintain high test coverage with unit and integration tests
+- **Code Quality**: Follow Google Java Style Guide and use static analysis tools
+
+### Database Guidelines
+
+- **Migrations**: All schema changes must be versioned using Flyway migrations
+- **UUIDs**: Use UUID primary keys for all entities for better distributed system support
+- **Enums**: Database enums are mapped to Java enums with automatic casting
+- **Auditing**: All entities include `created_at` and `updated_at` timestamps
 
 ## Testing
 
-### Unit Tests
+### Running Tests
 
-Run unit tests with:
 ```bash
-mvn test
-```
+# Run all tests
+mvn clean test
 
-### Integration Tests
+# Run tests for specific module
+mvn test -pl core-lending-loan-servicing-core
 
-Run integration tests with:
-```bash
+# Run integration tests
 mvn verify
+
+# Run tests with coverage
+mvn clean test jacoco:report
 ```
+
+### Test Categories
+
+- **Unit Tests**: Fast, isolated tests for business logic
+- **Integration Tests**: Database and API integration tests
+- **Validation Tests**: DTO validation constraint tests
+- **Contract Tests**: API contract verification
+
+## Configuration
+
+### Application Properties
+
+Key configuration properties in `application.yaml`:
+
+```yaml
+spring:
+  application:
+    name: core-lending-loan-servicing
+    version: 1.0.0
+  r2dbc:
+    url: r2dbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+```
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `DB_HOST` | Database host | `localhost` |
+| `DB_PORT` | Database port | `5432` |
+| `DB_NAME` | Database name | `loan_servicing` |
+| `DB_USERNAME` | Database username | - |
+| `DB_PASSWORD` | Database password | - |
+| `DB_SSL_MODE` | SSL mode | `disable` |
+| `SERVER_PORT` | Application port | `8080` |
+
+## Monitoring and Observability
+
+### Health Checks
+
+- **Liveness**: `/actuator/health/liveness`
+- **Readiness**: `/actuator/health/readiness`
+- **General Health**: `/actuator/health`
+
+### Metrics
+
+- **Prometheus**: `/actuator/prometheus`
+- **Application Info**: `/actuator/info`
 
 ## Deployment
 
 ### Development Environment
 
-The service is deployed at http://core.catalis.vc/loan-servicing in the development environment.
+The service is deployed in the development environment at:
+- **Base URL**: http://core.catalis.vc/loan-servicing
+- **API Docs**: http://core.catalis.vc/loan-servicing/swagger-ui.html
 
 ### Production Deployment
 
-For production deployment, follow the Firefly platform deployment guidelines.
+For production deployment:
+
+1. **Build the application:**
+   ```bash
+   mvn clean package -Pprod
+   ```
+
+2. **Deploy using Docker:**
+   ```bash
+   docker run -d \
+     --name loan-servicing \
+     -p 8080:8080 \
+     -e DB_HOST=prod-db-host \
+     -e DB_USERNAME=prod-user \
+     -e DB_PASSWORD=prod-password \
+     firefly/core-lending-loan-servicing:latest
+   ```
 
 ## Contributing
 
-1. Create a feature branch from the main branch
-2. Implement your changes
-3. Write tests for your changes
-4. Ensure all tests pass
-5. Submit a pull request
+We welcome contributions to the Firefly OpenCore Banking Platform! Please follow these guidelines:
+
+### Development Workflow
+
+1. **Fork the repository** from [firefly-oss/core-lending-loan-servicing](https://github.com/firefly-oss/core-lending-loan-servicing)
+2. **Create a feature branch** from `main`:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+3. **Implement your changes** following the coding standards
+4. **Write comprehensive tests** for your changes
+5. **Ensure all tests pass**:
+   ```bash
+   mvn clean verify
+   ```
+6. **Submit a pull request** with a clear description of changes
+
+### Code Review Process
+
+- All changes require review from at least one maintainer
+- Automated CI/CD checks must pass
+- Code coverage should not decrease
+- Documentation must be updated for API changes
+
+## License
+
+This project is licensed under the **Apache License 2.0** - see the [LICENSE](LICENSE) file for details.
+
+```
+Copyright 2024 Firefly Software Solutions Inc
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
+
+## Support and Contact
+
+- **Website**: [getfirefly.io](https://getfirefly.io)
+- **GitHub Organization**: [firefly-oss](https://github.com/firefly-oss)
+- **Documentation**: [docs.getfirefly.io](https://docs.getfirefly.io)
+- **Community**: [community.getfirefly.io](https://community.getfirefly.io)
+
+---
+
+**Firefly OpenCore Banking Platform** - Building the future of open banking infrastructure.
