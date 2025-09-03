@@ -1,0 +1,2490 @@
+openapi: 3.0.1
+info:
+  title: core-lending-loan-servicing
+  description: Loan Servicing Core Application
+  contact:
+    name: Firefly Software Solutions Inc
+    email: dev@getfirefly.io
+  version: 1.0.0
+servers:
+  - url: http://core.catalis.vc/loan-servicing
+    description: Development Environment
+  - url: /
+    description: Local Development Environment
+tags:
+  - name: LoanAccrual
+    description: Operations for Loan Accruals (interest, fees, etc.)
+  - name: LoanRepaymentRecord
+    description: Operations for Loan Repayment Records
+  - name: LoanRepaymentSchedule
+    description: Operations for Loan Repayment Schedules
+  - name: LoanServicingEvent
+    description: Operations for Loan Servicing Events
+  - name: LoanRateChange
+    description: Operations for Loan Rate Changes
+  - name: LoanServicingCase
+    description: Operations for Loan Servicing Cases
+  - name: LoanDisbursement
+    description: Operations for Loan Disbursements
+paths:
+  /api/v1/loan-servicing-cases/{caseId}:
+    get:
+      tags:
+        - LoanServicingCase
+      summary: Get a loan servicing case by ID
+      operationId: getById
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LoanServicingCaseDTO'
+    put:
+      tags:
+        - LoanServicingCase
+      summary: Update a loan servicing case
+      operationId: update
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanServicingCaseDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LoanServicingCaseDTO'
+    delete:
+      tags:
+        - LoanServicingCase
+      summary: Delete a loan servicing case
+      operationId: delete
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+  /api/v1/loan-servicing-cases/{caseId}/repayment-schedules/{scheduleId}:
+    get:
+      tags:
+        - LoanRepaymentSchedule
+      summary: Get a repayment schedule entry by ID
+      operationId: getById_1
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: scheduleId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LoanRepaymentScheduleDTO'
+    put:
+      tags:
+        - LoanRepaymentSchedule
+      summary: Update a repayment schedule entry
+      operationId: update_1
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: scheduleId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanRepaymentScheduleDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LoanRepaymentScheduleDTO'
+    delete:
+      tags:
+        - LoanRepaymentSchedule
+      summary: Delete a repayment schedule entry
+      operationId: delete_1
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: scheduleId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+  /api/v1/loan-servicing-cases/{caseId}/repayment-records/{recordId}:
+    get:
+      tags:
+        - LoanRepaymentRecord
+      summary: Get a repayment record by ID
+      operationId: getById_2
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: recordId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LoanRepaymentRecordDTO'
+    put:
+      tags:
+        - LoanRepaymentRecord
+      summary: Update a repayment record
+      operationId: update_2
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: recordId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanRepaymentRecordDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LoanRepaymentRecordDTO'
+    delete:
+      tags:
+        - LoanRepaymentRecord
+      summary: Delete a repayment record
+      operationId: delete_2
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: recordId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+  /api/v1/loan-servicing-cases/{caseId}/rate-changes/{rateChangeId}:
+    get:
+      tags:
+        - LoanRateChange
+      summary: Get a loan rate change by ID
+      operationId: getById_3
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: rateChangeId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LoanRateChangeDTO'
+    put:
+      tags:
+        - LoanRateChange
+      summary: Update a loan rate change
+      operationId: update_3
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: rateChangeId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanRateChangeDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LoanRateChangeDTO'
+    delete:
+      tags:
+        - LoanRateChange
+      summary: Delete a loan rate change record
+      operationId: delete_3
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: rateChangeId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+  /api/v1/loan-servicing-cases/{caseId}/events/{eventId}:
+    get:
+      tags:
+        - LoanServicingEvent
+      summary: Get a loan servicing event by ID
+      operationId: getById_4
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LoanServicingEventDTO'
+    put:
+      tags:
+        - LoanServicingEvent
+      summary: Update a loan servicing event
+      operationId: update_4
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanServicingEventDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LoanServicingEventDTO'
+    delete:
+      tags:
+        - LoanServicingEvent
+      summary: Delete a loan servicing event
+      operationId: delete_4
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+  /api/v1/loan-servicing-cases/{caseId}/disbursements/{disbursementId}:
+    get:
+      tags:
+        - LoanDisbursement
+      summary: Get a disbursement by ID
+      operationId: getById_5
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: disbursementId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LoanDisbursementDTO'
+    put:
+      tags:
+        - LoanDisbursement
+      summary: Update a disbursement record
+      operationId: update_5
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: disbursementId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanDisbursementDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LoanDisbursementDTO'
+    delete:
+      tags:
+        - LoanDisbursement
+      summary: Delete a disbursement record
+      operationId: delete_5
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: disbursementId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+  /api/v1/loan-servicing-cases/{caseId}/accruals/{accrualId}:
+    get:
+      tags:
+        - LoanAccrual
+      summary: Get a loan accrual by ID
+      operationId: getById_6
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: accrualId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LoanAccrualDTO'
+    put:
+      tags:
+        - LoanAccrual
+      summary: Update a loan accrual record
+      operationId: update_6
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: accrualId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanAccrualDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LoanAccrualDTO'
+    delete:
+      tags:
+        - LoanAccrual
+      summary: Delete a loan accrual record
+      operationId: delete_6
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: accrualId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+  /api/v1/loan-servicing-cases:
+    get:
+      tags:
+        - LoanServicingCase
+      summary: List/Search loan servicing cases
+      operationId: findAll
+      parameters:
+        - name: pagination.pageNumber
+          in: query
+          description: Page number (0-based)
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: pagination.pageSize
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: pagination.sortBy
+          in: query
+          description: Field to sort by
+          required: false
+          schema:
+            type: string
+        - name: pagination.sortDirection
+          in: query
+          description: Sort direction (ASC or DESC)
+          required: false
+          schema:
+            type: string
+            default: DESC
+        - name: options.caseInsensitiveStrings
+          in: query
+          description: Enable case-insensitive string filtering
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: options.includeInheritedFields
+          in: query
+          description: Include fields from parent classes
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: filters.contractId
+          in: query
+          description: Exact filter for contract id
+          required: false
+          schema:
+            type: string
+        - name: filters.productId
+          in: query
+          description: Exact filter for product id
+          required: false
+          schema:
+            type: string
+        - name: filters.accountId
+          in: query
+          description: Exact filter for account id
+          required: false
+          schema:
+            type: string
+        - name: filters.servicingStatus
+          in: query
+          description: Exact filter for servicing status
+          required: false
+          schema:
+            type: string
+            enum:
+              - ACTIVE
+              - PAID_OFF
+              - CLOSED
+              - DEFAULT
+              - RESTRUCTURED
+        - name: filters.principalOutstanding
+          in: query
+          description: Exact filter for principal outstanding
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[principalOutstanding].from
+          in: query
+          description: Filter principal outstanding from value
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[principalOutstanding].to
+          in: query
+          description: Filter principal outstanding to value
+          required: false
+          schema:
+            type: string
+        - name: filters.interestOutstanding
+          in: query
+          description: Exact filter for interest outstanding
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[interestOutstanding].from
+          in: query
+          description: Filter interest outstanding from value
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[interestOutstanding].to
+          in: query
+          description: Filter interest outstanding to value
+          required: false
+          schema:
+            type: string
+        - name: filters.feesOutstanding
+          in: query
+          description: Exact filter for fees outstanding
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[feesOutstanding].from
+          in: query
+          description: Filter fees outstanding from value
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[feesOutstanding].to
+          in: query
+          description: Filter fees outstanding to value
+          required: false
+          schema:
+            type: string
+        - name: filters.originationDate
+          in: query
+          description: Exact filter for origination date
+          required: false
+          schema:
+            type: string
+        - name: filters.maturityDate
+          in: query
+          description: Exact filter for maturity date
+          required: false
+          schema:
+            type: string
+        - name: filters.remarks
+          in: query
+          description: Exact filter for remarks
+          required: false
+          schema:
+            type: string
+        - name: filters.createdAt
+          in: query
+          description: Exact filter for created at
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[createdAt].from
+          in: query
+          description: Filter created at from value
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[createdAt].to
+          in: query
+          description: Filter created at to value
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: filters.updatedAt
+          in: query
+          description: Exact filter for updated at
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[updatedAt].from
+          in: query
+          description: Filter updated at from value
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[updatedAt].to
+          in: query
+          description: Filter updated at to value
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PaginationResponseLoanServicingCaseDTO'
+    post:
+      tags:
+        - LoanServicingCase
+      summary: Create a loan servicing case
+      operationId: create
+      parameters:
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanServicingCaseDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LoanServicingCaseDTO'
+  /api/v1/loan-servicing-cases/{caseId}/repayment-schedules:
+    get:
+      tags:
+        - LoanRepaymentSchedule
+      summary: List/Search repayment schedules for a servicing case
+      operationId: findAll_1
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: pagination.pageNumber
+          in: query
+          description: Page number (0-based)
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: pagination.pageSize
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: pagination.sortBy
+          in: query
+          description: Field to sort by
+          required: false
+          schema:
+            type: string
+        - name: pagination.sortDirection
+          in: query
+          description: Sort direction (ASC or DESC)
+          required: false
+          schema:
+            type: string
+            default: DESC
+        - name: options.caseInsensitiveStrings
+          in: query
+          description: Enable case-insensitive string filtering
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: options.includeInheritedFields
+          in: query
+          description: Include fields from parent classes
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: filters.loanServicingCaseId
+          in: query
+          description: Exact filter for loan servicing case id
+          required: false
+          schema:
+            type: string
+        - name: filters.installmentNumber
+          in: query
+          description: Exact filter for installment number
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: rangeFilters.ranges[installmentNumber].from
+          in: query
+          description: Filter installment number from value
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: rangeFilters.ranges[installmentNumber].to
+          in: query
+          description: Filter installment number to value
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: filters.dueDate
+          in: query
+          description: Exact filter for due date
+          required: false
+          schema:
+            type: string
+        - name: filters.principalDue
+          in: query
+          description: Exact filter for principal due
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[principalDue].from
+          in: query
+          description: Filter principal due from value
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[principalDue].to
+          in: query
+          description: Filter principal due to value
+          required: false
+          schema:
+            type: string
+        - name: filters.interestDue
+          in: query
+          description: Exact filter for interest due
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[interestDue].from
+          in: query
+          description: Filter interest due from value
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[interestDue].to
+          in: query
+          description: Filter interest due to value
+          required: false
+          schema:
+            type: string
+        - name: filters.feeDue
+          in: query
+          description: Exact filter for fee due
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[feeDue].from
+          in: query
+          description: Filter fee due from value
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[feeDue].to
+          in: query
+          description: Filter fee due to value
+          required: false
+          schema:
+            type: string
+        - name: filters.totalDue
+          in: query
+          description: Exact filter for total due
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[totalDue].from
+          in: query
+          description: Filter total due from value
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[totalDue].to
+          in: query
+          description: Filter total due to value
+          required: false
+          schema:
+            type: string
+        - name: filters.isPaid
+          in: query
+          description: Exact filter for is paid
+          required: false
+          schema:
+            type: boolean
+        - name: filters.paidDate
+          in: query
+          description: Exact filter for paid date
+          required: false
+          schema:
+            type: string
+        - name: filters.paidAmount
+          in: query
+          description: Exact filter for paid amount
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[paidAmount].from
+          in: query
+          description: Filter paid amount from value
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[paidAmount].to
+          in: query
+          description: Filter paid amount to value
+          required: false
+          schema:
+            type: string
+        - name: filters.createdAt
+          in: query
+          description: Exact filter for created at
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[createdAt].from
+          in: query
+          description: Filter created at from value
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[createdAt].to
+          in: query
+          description: Filter created at to value
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: filters.updatedAt
+          in: query
+          description: Exact filter for updated at
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[updatedAt].from
+          in: query
+          description: Filter updated at from value
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[updatedAt].to
+          in: query
+          description: Filter updated at to value
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PaginationResponseLoanRepaymentScheduleDTO'
+    post:
+      tags:
+        - LoanRepaymentSchedule
+      summary: Create a repayment schedule entry
+      operationId: create_1
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanRepaymentScheduleDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LoanRepaymentScheduleDTO'
+  /api/v1/loan-servicing-cases/{caseId}/repayment-records:
+    get:
+      tags:
+        - LoanRepaymentRecord
+      summary: List/Search repayment records for a servicing case
+      operationId: findAll_2
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: pagination.pageNumber
+          in: query
+          description: Page number (0-based)
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: pagination.pageSize
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: pagination.sortBy
+          in: query
+          description: Field to sort by
+          required: false
+          schema:
+            type: string
+        - name: pagination.sortDirection
+          in: query
+          description: Sort direction (ASC or DESC)
+          required: false
+          schema:
+            type: string
+            default: DESC
+        - name: options.caseInsensitiveStrings
+          in: query
+          description: Enable case-insensitive string filtering
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: options.includeInheritedFields
+          in: query
+          description: Include fields from parent classes
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: filters.loanServicingCaseId
+          in: query
+          description: Exact filter for loan servicing case id
+          required: false
+          schema:
+            type: string
+        - name: filters.loanRepaymentScheduleId
+          in: query
+          description: Exact filter for loan repayment schedule id
+          required: false
+          schema:
+            type: string
+        - name: filters.transactionId
+          in: query
+          description: Exact filter for transaction id
+          required: false
+          schema:
+            type: string
+        - name: filters.paymentAmount
+          in: query
+          description: Exact filter for payment amount
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[paymentAmount].from
+          in: query
+          description: Filter payment amount from value
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[paymentAmount].to
+          in: query
+          description: Filter payment amount to value
+          required: false
+          schema:
+            type: string
+        - name: filters.paymentDate
+          in: query
+          description: Exact filter for payment date
+          required: false
+          schema:
+            type: string
+        - name: filters.isPartialPayment
+          in: query
+          description: Exact filter for is partial payment
+          required: false
+          schema:
+            type: boolean
+        - name: filters.note
+          in: query
+          description: Exact filter for note
+          required: false
+          schema:
+            type: string
+        - name: filters.createdAt
+          in: query
+          description: Exact filter for created at
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[createdAt].from
+          in: query
+          description: Filter created at from value
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[createdAt].to
+          in: query
+          description: Filter created at to value
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: filters.updatedAt
+          in: query
+          description: Exact filter for updated at
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[updatedAt].from
+          in: query
+          description: Filter updated at from value
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[updatedAt].to
+          in: query
+          description: Filter updated at to value
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PaginationResponseLoanRepaymentRecordDTO'
+    post:
+      tags:
+        - LoanRepaymentRecord
+      summary: Create a repayment record
+      operationId: create_2
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanRepaymentRecordDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LoanRepaymentRecordDTO'
+  /api/v1/loan-servicing-cases/{caseId}/rate-changes:
+    get:
+      tags:
+        - LoanRateChange
+      summary: List/Search rate changes for a servicing case
+      operationId: findAll_3
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: pagination.pageNumber
+          in: query
+          description: Page number (0-based)
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: pagination.pageSize
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: pagination.sortBy
+          in: query
+          description: Field to sort by
+          required: false
+          schema:
+            type: string
+        - name: pagination.sortDirection
+          in: query
+          description: Sort direction (ASC or DESC)
+          required: false
+          schema:
+            type: string
+            default: DESC
+        - name: options.caseInsensitiveStrings
+          in: query
+          description: Enable case-insensitive string filtering
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: options.includeInheritedFields
+          in: query
+          description: Include fields from parent classes
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: filters.loanServicingCaseId
+          in: query
+          description: Exact filter for loan servicing case id
+          required: false
+          schema:
+            type: string
+        - name: filters.oldInterestRate
+          in: query
+          description: Exact filter for old interest rate
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[oldInterestRate].from
+          in: query
+          description: Filter old interest rate from value
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[oldInterestRate].to
+          in: query
+          description: Filter old interest rate to value
+          required: false
+          schema:
+            type: string
+        - name: filters.newInterestRate
+          in: query
+          description: Exact filter for new interest rate
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[newInterestRate].from
+          in: query
+          description: Filter new interest rate from value
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[newInterestRate].to
+          in: query
+          description: Filter new interest rate to value
+          required: false
+          schema:
+            type: string
+        - name: filters.effectiveDate
+          in: query
+          description: Exact filter for effective date
+          required: false
+          schema:
+            type: string
+        - name: filters.reasonCode
+          in: query
+          description: Exact filter for reason code
+          required: false
+          schema:
+            type: string
+            enum:
+              - INDEX_ADJUSTMENT
+              - RENEGOTIATION
+              - PENALTY
+              - PROMOTION
+        - name: filters.note
+          in: query
+          description: Exact filter for note
+          required: false
+          schema:
+            type: string
+        - name: filters.createdAt
+          in: query
+          description: Exact filter for created at
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[createdAt].from
+          in: query
+          description: Filter created at from value
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[createdAt].to
+          in: query
+          description: Filter created at to value
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: filters.updatedAt
+          in: query
+          description: Exact filter for updated at
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[updatedAt].from
+          in: query
+          description: Filter updated at from value
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[updatedAt].to
+          in: query
+          description: Filter updated at to value
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PaginationResponseLoanRateChangeDTO'
+    post:
+      tags:
+        - LoanRateChange
+      summary: Create a new loan rate change
+      operationId: create_3
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanRateChangeDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LoanRateChangeDTO'
+  /api/v1/loan-servicing-cases/{caseId}/events:
+    get:
+      tags:
+        - LoanServicingEvent
+      summary: List/Search loan servicing events
+      operationId: findAll_4
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: pagination.pageNumber
+          in: query
+          description: Page number (0-based)
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: pagination.pageSize
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: pagination.sortBy
+          in: query
+          description: Field to sort by
+          required: false
+          schema:
+            type: string
+        - name: pagination.sortDirection
+          in: query
+          description: Sort direction (ASC or DESC)
+          required: false
+          schema:
+            type: string
+            default: DESC
+        - name: options.caseInsensitiveStrings
+          in: query
+          description: Enable case-insensitive string filtering
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: options.includeInheritedFields
+          in: query
+          description: Include fields from parent classes
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: filters.loanServicingCaseId
+          in: query
+          description: Exact filter for loan servicing case id
+          required: false
+          schema:
+            type: string
+        - name: filters.eventType
+          in: query
+          description: Exact filter for event type
+          required: false
+          schema:
+            type: string
+            enum:
+              - RESTRUCTURE
+              - EXTENSION
+              - DEFERMENT
+              - COLLECTION_CALL
+              - NOTICE
+        - name: filters.eventDate
+          in: query
+          description: Exact filter for event date
+          required: false
+          schema:
+            type: string
+        - name: filters.description
+          in: query
+          description: Exact filter for description
+          required: false
+          schema:
+            type: string
+        - name: filters.createdAt
+          in: query
+          description: Exact filter for created at
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[createdAt].from
+          in: query
+          description: Filter created at from value
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[createdAt].to
+          in: query
+          description: Filter created at to value
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: filters.updatedAt
+          in: query
+          description: Exact filter for updated at
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[updatedAt].from
+          in: query
+          description: Filter updated at from value
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[updatedAt].to
+          in: query
+          description: Filter updated at to value
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PaginationResponseLoanServicingEventDTO'
+    post:
+      tags:
+        - LoanServicingEvent
+      summary: Create a new loan servicing event
+      operationId: create_4
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanServicingEventDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LoanServicingEventDTO'
+  /api/v1/loan-servicing-cases/{caseId}/disbursements:
+    get:
+      tags:
+        - LoanDisbursement
+      summary: List/Search disbursements for a specific servicing case
+      operationId: findAll_5
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: pagination.pageNumber
+          in: query
+          description: Page number (0-based)
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: pagination.pageSize
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: pagination.sortBy
+          in: query
+          description: Field to sort by
+          required: false
+          schema:
+            type: string
+        - name: pagination.sortDirection
+          in: query
+          description: Sort direction (ASC or DESC)
+          required: false
+          schema:
+            type: string
+            default: DESC
+        - name: options.caseInsensitiveStrings
+          in: query
+          description: Enable case-insensitive string filtering
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: options.includeInheritedFields
+          in: query
+          description: Include fields from parent classes
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: filters.loanServicingCaseId
+          in: query
+          description: Exact filter for loan servicing case id
+          required: false
+          schema:
+            type: string
+        - name: filters.transactionId
+          in: query
+          description: Exact filter for transaction id
+          required: false
+          schema:
+            type: string
+        - name: filters.disbursementAmount
+          in: query
+          description: Exact filter for disbursement amount
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[disbursementAmount].from
+          in: query
+          description: Filter disbursement amount from value
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[disbursementAmount].to
+          in: query
+          description: Filter disbursement amount to value
+          required: false
+          schema:
+            type: string
+        - name: filters.disbursementDate
+          in: query
+          description: Exact filter for disbursement date
+          required: false
+          schema:
+            type: string
+        - name: filters.isFinalDisbursement
+          in: query
+          description: Exact filter for is final disbursement
+          required: false
+          schema:
+            type: boolean
+        - name: filters.note
+          in: query
+          description: Exact filter for note
+          required: false
+          schema:
+            type: string
+        - name: filters.createdAt
+          in: query
+          description: Exact filter for created at
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[createdAt].from
+          in: query
+          description: Filter created at from value
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[createdAt].to
+          in: query
+          description: Filter created at to value
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: filters.updatedAt
+          in: query
+          description: Exact filter for updated at
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[updatedAt].from
+          in: query
+          description: Filter updated at from value
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[updatedAt].to
+          in: query
+          description: Filter updated at to value
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PaginationResponseLoanDisbursementDTO'
+    post:
+      tags:
+        - LoanDisbursement
+      summary: Create a new disbursement under a servicing case
+      operationId: create_5
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanDisbursementDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LoanDisbursementDTO'
+  /api/v1/loan-servicing-cases/{caseId}/accruals:
+    get:
+      tags:
+        - LoanAccrual
+      summary: List/Search accruals for a servicing case
+      operationId: findAll_6
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: pagination.pageNumber
+          in: query
+          description: Page number (0-based)
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: pagination.pageSize
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: pagination.sortBy
+          in: query
+          description: Field to sort by
+          required: false
+          schema:
+            type: string
+        - name: pagination.sortDirection
+          in: query
+          description: Sort direction (ASC or DESC)
+          required: false
+          schema:
+            type: string
+            default: DESC
+        - name: options.caseInsensitiveStrings
+          in: query
+          description: Enable case-insensitive string filtering
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: options.includeInheritedFields
+          in: query
+          description: Include fields from parent classes
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: filters.loanServicingCaseId
+          in: query
+          description: Exact filter for loan servicing case id
+          required: false
+          schema:
+            type: string
+        - name: filters.accrualAmount
+          in: query
+          description: Exact filter for accrual amount
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[accrualAmount].from
+          in: query
+          description: Filter accrual amount from value
+          required: false
+          schema:
+            type: string
+        - name: rangeFilters.ranges[accrualAmount].to
+          in: query
+          description: Filter accrual amount to value
+          required: false
+          schema:
+            type: string
+        - name: filters.accrualType
+          in: query
+          description: Exact filter for accrual type
+          required: false
+          schema:
+            type: string
+            enum:
+              - INTEREST
+              - PENALTY
+              - LATE_FEE
+              - SERVICING_FEE
+        - name: filters.accrualDate
+          in: query
+          description: Exact filter for accrual date
+          required: false
+          schema:
+            type: string
+        - name: filters.note
+          in: query
+          description: Exact filter for note
+          required: false
+          schema:
+            type: string
+        - name: filters.createdAt
+          in: query
+          description: Exact filter for created at
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[createdAt].from
+          in: query
+          description: Filter created at from value
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[createdAt].to
+          in: query
+          description: Filter created at to value
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: filters.updatedAt
+          in: query
+          description: Exact filter for updated at
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[updatedAt].from
+          in: query
+          description: Filter updated at from value
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: rangeFilters.ranges[updatedAt].to
+          in: query
+          description: Filter updated at to value
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PaginationResponseLoanAccrualDTO'
+    post:
+      tags:
+        - LoanAccrual
+      summary: Create a loan accrual record
+      operationId: create_6
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanAccrualDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LoanAccrualDTO'
+components:
+  schemas:
+    LoanServicingCaseDTO:
+      required:
+        - accountId
+        - contractId
+        - feesOutstanding
+        - interestOutstanding
+        - maturityDate
+        - originationDate
+        - principalOutstanding
+        - productId
+        - servicingStatus
+      type: object
+      properties:
+        loanServicingCaseId:
+          type: string
+          format: uuid
+          readOnly: true
+        contractId:
+          type: string
+          format: uuid
+        productId:
+          type: string
+          format: uuid
+        accountId:
+          type: string
+          format: uuid
+        servicingStatus:
+          type: string
+          enum:
+            - ACTIVE
+            - PAID_OFF
+            - CLOSED
+            - DEFAULT
+            - RESTRUCTURED
+        principalOutstanding:
+          minimum: 0
+          exclusiveMinimum: false
+          type: number
+        interestOutstanding:
+          minimum: 0
+          exclusiveMinimum: false
+          type: number
+        feesOutstanding:
+          minimum: 0
+          exclusiveMinimum: false
+          type: number
+        originationDate:
+          type: string
+          format: date
+        maturityDate:
+          type: string
+          format: date
+        remarks:
+          maxLength: 1000
+          minLength: 0
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    LoanRepaymentScheduleDTO:
+      required:
+        - dueDate
+        - feeDue
+        - installmentNumber
+        - interestDue
+        - isPaid
+        - loanServicingCaseId
+        - principalDue
+        - totalDue
+      type: object
+      properties:
+        loanRepaymentScheduleId:
+          type: string
+          format: uuid
+          readOnly: true
+        loanServicingCaseId:
+          type: string
+          format: uuid
+        installmentNumber:
+          minimum: 1
+          type: integer
+          format: int32
+        dueDate:
+          type: string
+          format: date
+        principalDue:
+          minimum: 0
+          exclusiveMinimum: false
+          type: number
+        interestDue:
+          minimum: 0
+          exclusiveMinimum: false
+          type: number
+        feeDue:
+          minimum: 0
+          exclusiveMinimum: false
+          type: number
+        totalDue:
+          minimum: 0
+          exclusiveMinimum: false
+          type: number
+        isPaid:
+          type: boolean
+        paidDate:
+          type: string
+          format: date
+        paidAmount:
+          minimum: 0
+          exclusiveMinimum: false
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    LoanRepaymentRecordDTO:
+      required:
+        - isPartialPayment
+        - loanServicingCaseId
+        - paymentAmount
+        - paymentDate
+        - transactionId
+      type: object
+      properties:
+        loanRepaymentRecordId:
+          type: string
+          format: uuid
+          readOnly: true
+        loanServicingCaseId:
+          type: string
+          format: uuid
+        loanRepaymentScheduleId:
+          type: string
+          format: uuid
+        transactionId:
+          type: string
+          format: uuid
+        paymentAmount:
+          minimum: 0.01
+          exclusiveMinimum: false
+          type: number
+        paymentDate:
+          type: string
+          format: date
+        isPartialPayment:
+          type: boolean
+        note:
+          maxLength: 500
+          minLength: 0
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    LoanRateChangeDTO:
+      required:
+        - effectiveDate
+        - loanServicingCaseId
+        - newInterestRate
+        - oldInterestRate
+        - reasonCode
+      type: object
+      properties:
+        loanRateChangeId:
+          type: string
+          format: uuid
+          readOnly: true
+        loanServicingCaseId:
+          type: string
+          format: uuid
+        oldInterestRate:
+          maximum: 100
+          exclusiveMaximum: false
+          minimum: 0
+          exclusiveMinimum: false
+          type: number
+        newInterestRate:
+          maximum: 100
+          exclusiveMaximum: false
+          minimum: 0
+          exclusiveMinimum: false
+          type: number
+        effectiveDate:
+          type: string
+          format: date
+        reasonCode:
+          type: string
+          enum:
+            - INDEX_ADJUSTMENT
+            - RENEGOTIATION
+            - PENALTY
+            - PROMOTION
+        note:
+          maxLength: 500
+          minLength: 0
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    LoanServicingEventDTO:
+      required:
+        - description
+        - eventDate
+        - eventType
+        - loanServicingCaseId
+      type: object
+      properties:
+        loanServicingEventId:
+          type: string
+          format: uuid
+          readOnly: true
+        loanServicingCaseId:
+          type: string
+          format: uuid
+        eventType:
+          type: string
+          enum:
+            - RESTRUCTURE
+            - EXTENSION
+            - DEFERMENT
+            - COLLECTION_CALL
+            - NOTICE
+        eventDate:
+          type: string
+          format: date
+        description:
+          maxLength: 1000
+          minLength: 0
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    LoanDisbursementDTO:
+      required:
+        - disbursementAmount
+        - disbursementDate
+        - isFinalDisbursement
+        - loanServicingCaseId
+        - transactionId
+      type: object
+      properties:
+        loanDisbursementId:
+          type: string
+          format: uuid
+          readOnly: true
+        loanServicingCaseId:
+          type: string
+          format: uuid
+        transactionId:
+          type: string
+          format: uuid
+        disbursementAmount:
+          minimum: 0.01
+          exclusiveMinimum: false
+          type: number
+        disbursementDate:
+          type: string
+          format: date
+        isFinalDisbursement:
+          type: boolean
+        note:
+          maxLength: 500
+          minLength: 0
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    LoanAccrualDTO:
+      required:
+        - accrualAmount
+        - accrualDate
+        - accrualType
+        - loanServicingCaseId
+      type: object
+      properties:
+        loanAccrualId:
+          type: string
+          format: uuid
+          readOnly: true
+        loanServicingCaseId:
+          type: string
+          format: uuid
+        accrualAmount:
+          minimum: 0.01
+          exclusiveMinimum: false
+          type: number
+        accrualType:
+          type: string
+          enum:
+            - INTEREST
+            - PENALTY
+            - LATE_FEE
+            - SERVICING_FEE
+        accrualDate:
+          type: string
+          format: date
+        note:
+          maxLength: 500
+          minLength: 0
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    PaginationResponseLoanServicingCaseDTO:
+      type: object
+      properties:
+        content:
+          type: array
+          description: The list of items for the current page.
+          items:
+            $ref: '#/components/schemas/LoanServicingCaseDTO'
+        totalElements:
+          type: integer
+          description: The total number of elements across all pages.
+          format: int64
+        totalPages:
+          type: integer
+          description: The total number of pages based on the data size and page size.
+          format: int32
+        currentPage:
+          type: integer
+          description: The current page number, typically zero-based.
+          format: int32
+      description: Represents a paginated response containing a list of items and pagination metadata.
+    PaginationResponseLoanRepaymentScheduleDTO:
+      type: object
+      properties:
+        content:
+          type: array
+          description: The list of items for the current page.
+          items:
+            $ref: '#/components/schemas/LoanRepaymentScheduleDTO'
+        totalElements:
+          type: integer
+          description: The total number of elements across all pages.
+          format: int64
+        totalPages:
+          type: integer
+          description: The total number of pages based on the data size and page size.
+          format: int32
+        currentPage:
+          type: integer
+          description: The current page number, typically zero-based.
+          format: int32
+      description: Represents a paginated response containing a list of items and pagination metadata.
+    PaginationResponseLoanRepaymentRecordDTO:
+      type: object
+      properties:
+        content:
+          type: array
+          description: The list of items for the current page.
+          items:
+            $ref: '#/components/schemas/LoanRepaymentRecordDTO'
+        totalElements:
+          type: integer
+          description: The total number of elements across all pages.
+          format: int64
+        totalPages:
+          type: integer
+          description: The total number of pages based on the data size and page size.
+          format: int32
+        currentPage:
+          type: integer
+          description: The current page number, typically zero-based.
+          format: int32
+      description: Represents a paginated response containing a list of items and pagination metadata.
+    PaginationResponseLoanRateChangeDTO:
+      type: object
+      properties:
+        content:
+          type: array
+          description: The list of items for the current page.
+          items:
+            $ref: '#/components/schemas/LoanRateChangeDTO'
+        totalElements:
+          type: integer
+          description: The total number of elements across all pages.
+          format: int64
+        totalPages:
+          type: integer
+          description: The total number of pages based on the data size and page size.
+          format: int32
+        currentPage:
+          type: integer
+          description: The current page number, typically zero-based.
+          format: int32
+      description: Represents a paginated response containing a list of items and pagination metadata.
+    PaginationResponseLoanServicingEventDTO:
+      type: object
+      properties:
+        content:
+          type: array
+          description: The list of items for the current page.
+          items:
+            $ref: '#/components/schemas/LoanServicingEventDTO'
+        totalElements:
+          type: integer
+          description: The total number of elements across all pages.
+          format: int64
+        totalPages:
+          type: integer
+          description: The total number of pages based on the data size and page size.
+          format: int32
+        currentPage:
+          type: integer
+          description: The current page number, typically zero-based.
+          format: int32
+      description: Represents a paginated response containing a list of items and pagination metadata.
+    PaginationResponseLoanDisbursementDTO:
+      type: object
+      properties:
+        content:
+          type: array
+          description: The list of items for the current page.
+          items:
+            $ref: '#/components/schemas/LoanDisbursementDTO'
+        totalElements:
+          type: integer
+          description: The total number of elements across all pages.
+          format: int64
+        totalPages:
+          type: integer
+          description: The total number of pages based on the data size and page size.
+          format: int32
+        currentPage:
+          type: integer
+          description: The current page number, typically zero-based.
+          format: int32
+      description: Represents a paginated response containing a list of items and pagination metadata.
+    PaginationResponseLoanAccrualDTO:
+      type: object
+      properties:
+        content:
+          type: array
+          description: The list of items for the current page.
+          items:
+            $ref: '#/components/schemas/LoanAccrualDTO'
+        totalElements:
+          type: integer
+          description: The total number of elements across all pages.
+          format: int64
+        totalPages:
+          type: integer
+          description: The total number of pages based on the data size and page size.
+          format: int32
+        currentPage:
+          type: integer
+          description: The current page number, typically zero-based.
+          format: int32
+      description: Represents a paginated response containing a list of items and pagination metadata.
