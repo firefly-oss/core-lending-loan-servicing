@@ -11,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import jakarta.validation.Valid;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/v1/loan-servicing-cases/{caseId}/repayment-schedules")
 @Tag(name = "LoanRepaymentSchedule", description = "Operations for Loan Repayment Schedules")
@@ -22,7 +25,7 @@ public class LoanRepaymentScheduleController {
     @GetMapping
     @Operation(summary = "List/Search repayment schedules for a servicing case")
     public Mono<ResponseEntity<PaginationResponse<LoanRepaymentScheduleDTO>>> findAll(
-            @PathVariable("caseId") Long loanServicingCaseId,
+            @PathVariable("caseId") UUID loanServicingCaseId,
             @ModelAttribute FilterRequest<LoanRepaymentScheduleDTO> filterRequest) {
 
         return service.findAll(loanServicingCaseId, filterRequest)
@@ -32,8 +35,8 @@ public class LoanRepaymentScheduleController {
     @PostMapping
     @Operation(summary = "Create a repayment schedule entry")
     public Mono<ResponseEntity<LoanRepaymentScheduleDTO>> create(
-            @PathVariable("caseId") Long loanServicingCaseId,
-            @RequestBody LoanRepaymentScheduleDTO dto) {
+            @PathVariable("caseId") UUID loanServicingCaseId,
+            @Valid @RequestBody LoanRepaymentScheduleDTO dto) {
 
         return service.create(loanServicingCaseId, dto)
                 .map(ResponseEntity::ok);
@@ -42,8 +45,8 @@ public class LoanRepaymentScheduleController {
     @GetMapping("/{scheduleId}")
     @Operation(summary = "Get a repayment schedule entry by ID")
     public Mono<ResponseEntity<LoanRepaymentScheduleDTO>> getById(
-            @PathVariable("caseId") Long loanServicingCaseId,
-            @PathVariable("scheduleId") Long loanRepaymentScheduleId) {
+            @PathVariable("caseId") UUID loanServicingCaseId,
+            @PathVariable("scheduleId") UUID loanRepaymentScheduleId) {
 
         return service.getById(loanServicingCaseId, loanRepaymentScheduleId)
                 .map(ResponseEntity::ok);
@@ -52,9 +55,9 @@ public class LoanRepaymentScheduleController {
     @PutMapping("/{scheduleId}")
     @Operation(summary = "Update a repayment schedule entry")
     public Mono<ResponseEntity<LoanRepaymentScheduleDTO>> update(
-            @PathVariable("caseId") Long loanServicingCaseId,
-            @PathVariable("scheduleId") Long loanRepaymentScheduleId,
-            @RequestBody LoanRepaymentScheduleDTO dto) {
+            @PathVariable("caseId") UUID loanServicingCaseId,
+            @PathVariable("scheduleId") UUID loanRepaymentScheduleId,
+            @Valid @RequestBody LoanRepaymentScheduleDTO dto) {
 
         return service.update(loanServicingCaseId, loanRepaymentScheduleId, dto)
                 .map(ResponseEntity::ok);
@@ -63,8 +66,8 @@ public class LoanRepaymentScheduleController {
     @DeleteMapping("/{scheduleId}")
     @Operation(summary = "Delete a repayment schedule entry")
     public Mono<ResponseEntity<Void>> delete(
-            @PathVariable("caseId") Long loanServicingCaseId,
-            @PathVariable("scheduleId") Long loanRepaymentScheduleId) {
+            @PathVariable("caseId") UUID loanServicingCaseId,
+            @PathVariable("scheduleId") UUID loanRepaymentScheduleId) {
 
         return service.delete(loanServicingCaseId, loanRepaymentScheduleId)
                 .thenReturn(ResponseEntity.noContent().build());

@@ -11,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import jakarta.validation.Valid;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/v1/loan-servicing-cases")
 @Tag(name = "LoanServicingCase", description = "Operations for Loan Servicing Cases")
@@ -30,14 +33,14 @@ public class LoanServicingCaseController {
 
     @PostMapping
     @Operation(summary = "Create a loan servicing case")
-    public Mono<ResponseEntity<LoanServicingCaseDTO>> create(@RequestBody LoanServicingCaseDTO dto) {
+    public Mono<ResponseEntity<LoanServicingCaseDTO>> create(@Valid @RequestBody LoanServicingCaseDTO dto) {
         return service.create(dto)
                 .map(ResponseEntity::ok);
     }
 
     @GetMapping("/{caseId}")
     @Operation(summary = "Get a loan servicing case by ID")
-    public Mono<ResponseEntity<LoanServicingCaseDTO>> getById(@PathVariable("caseId") Long loanServicingCaseId) {
+    public Mono<ResponseEntity<LoanServicingCaseDTO>> getById(@PathVariable("caseId") UUID loanServicingCaseId) {
         return service.getById(loanServicingCaseId)
                 .map(ResponseEntity::ok);
     }
@@ -45,8 +48,8 @@ public class LoanServicingCaseController {
     @PutMapping("/{caseId}")
     @Operation(summary = "Update a loan servicing case")
     public Mono<ResponseEntity<LoanServicingCaseDTO>> update(
-            @PathVariable("caseId") Long loanServicingCaseId,
-            @RequestBody LoanServicingCaseDTO dto) {
+            @PathVariable("caseId") UUID loanServicingCaseId,
+            @Valid @RequestBody LoanServicingCaseDTO dto) {
 
         return service.update(loanServicingCaseId, dto)
                 .map(ResponseEntity::ok);
@@ -54,7 +57,7 @@ public class LoanServicingCaseController {
 
     @DeleteMapping("/{caseId}")
     @Operation(summary = "Delete a loan servicing case")
-    public Mono<ResponseEntity<Void>> delete(@PathVariable("caseId") Long loanServicingCaseId) {
+    public Mono<ResponseEntity<Void>> delete(@PathVariable("caseId") UUID loanServicingCaseId) {
         return service.delete(loanServicingCaseId)
                 .thenReturn(ResponseEntity.noContent().build());
     }

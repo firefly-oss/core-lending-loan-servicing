@@ -11,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import jakarta.validation.Valid;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/v1/loan-servicing-cases/{caseId}/repayment-records")
 @Tag(name = "LoanRepaymentRecord", description = "Operations for Loan Repayment Records")
@@ -22,7 +25,7 @@ public class LoanRepaymentRecordController {
     @GetMapping
     @Operation(summary = "List/Search repayment records for a servicing case")
     public Mono<ResponseEntity<PaginationResponse<LoanRepaymentRecordDTO>>> findAll(
-            @PathVariable("caseId") Long loanServicingCaseId,
+            @PathVariable("caseId") UUID loanServicingCaseId,
             @ModelAttribute FilterRequest<LoanRepaymentRecordDTO> filterRequest) {
 
         return service.findAll(loanServicingCaseId, filterRequest)
@@ -32,8 +35,8 @@ public class LoanRepaymentRecordController {
     @PostMapping
     @Operation(summary = "Create a repayment record")
     public Mono<ResponseEntity<LoanRepaymentRecordDTO>> create(
-            @PathVariable("caseId") Long loanServicingCaseId,
-            @RequestBody LoanRepaymentRecordDTO dto) {
+            @PathVariable("caseId") UUID loanServicingCaseId,
+            @Valid @RequestBody LoanRepaymentRecordDTO dto) {
 
         return service.create(loanServicingCaseId, dto)
                 .map(ResponseEntity::ok);
@@ -42,8 +45,8 @@ public class LoanRepaymentRecordController {
     @GetMapping("/{recordId}")
     @Operation(summary = "Get a repayment record by ID")
     public Mono<ResponseEntity<LoanRepaymentRecordDTO>> getById(
-            @PathVariable("caseId") Long loanServicingCaseId,
-            @PathVariable("recordId") Long loanRepaymentRecordId) {
+            @PathVariable("caseId") UUID loanServicingCaseId,
+            @PathVariable("recordId") UUID loanRepaymentRecordId) {
 
         return service.getById(loanServicingCaseId, loanRepaymentRecordId)
                 .map(ResponseEntity::ok);
@@ -52,9 +55,9 @@ public class LoanRepaymentRecordController {
     @PutMapping("/{recordId}")
     @Operation(summary = "Update a repayment record")
     public Mono<ResponseEntity<LoanRepaymentRecordDTO>> update(
-            @PathVariable("caseId") Long loanServicingCaseId,
-            @PathVariable("recordId") Long loanRepaymentRecordId,
-            @RequestBody LoanRepaymentRecordDTO dto) {
+            @PathVariable("caseId") UUID loanServicingCaseId,
+            @PathVariable("recordId") UUID loanRepaymentRecordId,
+            @Valid @RequestBody LoanRepaymentRecordDTO dto) {
 
         return service.update(loanServicingCaseId, loanRepaymentRecordId, dto)
                 .map(ResponseEntity::ok);
@@ -63,8 +66,8 @@ public class LoanRepaymentRecordController {
     @DeleteMapping("/{recordId}")
     @Operation(summary = "Delete a repayment record")
     public Mono<ResponseEntity<Void>> delete(
-            @PathVariable("caseId") Long loanServicingCaseId,
-            @PathVariable("recordId") Long loanRepaymentRecordId) {
+            @PathVariable("caseId") UUID loanServicingCaseId,
+            @PathVariable("recordId") UUID loanRepaymentRecordId) {
 
         return service.delete(loanServicingCaseId, loanRepaymentRecordId)
                 .thenReturn(ResponseEntity.noContent().build());

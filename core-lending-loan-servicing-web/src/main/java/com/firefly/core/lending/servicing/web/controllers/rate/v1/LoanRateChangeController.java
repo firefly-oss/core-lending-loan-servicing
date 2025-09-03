@@ -11,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import jakarta.validation.Valid;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/v1/loan-servicing-cases/{caseId}/rate-changes")
 @Tag(name = "LoanRateChange", description = "Operations for Loan Rate Changes")
@@ -22,7 +25,7 @@ public class LoanRateChangeController {
     @GetMapping
     @Operation(summary = "List/Search rate changes for a servicing case")
     public Mono<ResponseEntity<PaginationResponse<LoanRateChangeDTO>>> findAll(
-            @PathVariable("caseId") Long loanServicingCaseId,
+            @PathVariable("caseId") UUID loanServicingCaseId,
             @ModelAttribute FilterRequest<LoanRateChangeDTO> filterRequest) {
 
         return service.findAll(loanServicingCaseId, filterRequest)
@@ -32,8 +35,8 @@ public class LoanRateChangeController {
     @PostMapping
     @Operation(summary = "Create a new loan rate change")
     public Mono<ResponseEntity<LoanRateChangeDTO>> create(
-            @PathVariable("caseId") Long loanServicingCaseId,
-            @RequestBody LoanRateChangeDTO dto) {
+            @PathVariable("caseId") UUID loanServicingCaseId,
+            @Valid @RequestBody LoanRateChangeDTO dto) {
 
         return service.create(loanServicingCaseId, dto)
                 .map(ResponseEntity::ok);
@@ -42,8 +45,8 @@ public class LoanRateChangeController {
     @GetMapping("/{rateChangeId}")
     @Operation(summary = "Get a loan rate change by ID")
     public Mono<ResponseEntity<LoanRateChangeDTO>> getById(
-            @PathVariable("caseId") Long loanServicingCaseId,
-            @PathVariable("rateChangeId") Long loanRateChangeId) {
+            @PathVariable("caseId") UUID loanServicingCaseId,
+            @PathVariable("rateChangeId") UUID loanRateChangeId) {
 
         return service.getById(loanServicingCaseId, loanRateChangeId)
                 .map(ResponseEntity::ok);
@@ -52,9 +55,9 @@ public class LoanRateChangeController {
     @PutMapping("/{rateChangeId}")
     @Operation(summary = "Update a loan rate change")
     public Mono<ResponseEntity<LoanRateChangeDTO>> update(
-            @PathVariable("caseId") Long loanServicingCaseId,
-            @PathVariable("rateChangeId") Long loanRateChangeId,
-            @RequestBody LoanRateChangeDTO dto) {
+            @PathVariable("caseId") UUID loanServicingCaseId,
+            @PathVariable("rateChangeId") UUID loanRateChangeId,
+            @Valid @RequestBody LoanRateChangeDTO dto) {
 
         return service.update(loanServicingCaseId, loanRateChangeId, dto)
                 .map(ResponseEntity::ok);
@@ -63,8 +66,8 @@ public class LoanRateChangeController {
     @DeleteMapping("/{rateChangeId}")
     @Operation(summary = "Delete a loan rate change record")
     public Mono<ResponseEntity<Void>> delete(
-            @PathVariable("caseId") Long loanServicingCaseId,
-            @PathVariable("rateChangeId") Long loanRateChangeId) {
+            @PathVariable("caseId") UUID loanServicingCaseId,
+            @PathVariable("rateChangeId") UUID loanRateChangeId) {
 
         return service.delete(loanServicingCaseId, loanRateChangeId)
                 .thenReturn(ResponseEntity.noContent().build());

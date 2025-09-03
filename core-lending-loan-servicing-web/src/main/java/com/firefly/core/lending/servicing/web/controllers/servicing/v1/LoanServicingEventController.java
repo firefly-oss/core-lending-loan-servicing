@@ -11,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import jakarta.validation.Valid;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/v1/loan-servicing-cases/{caseId}/events")
 @Tag(name = "LoanServicingEvent", description = "Operations for Loan Servicing Events")
@@ -22,7 +25,7 @@ public class LoanServicingEventController {
     @GetMapping
     @Operation(summary = "List/Search loan servicing events")
     public Mono<ResponseEntity<PaginationResponse<LoanServicingEventDTO>>> findAll(
-            @PathVariable("caseId") Long loanServicingCaseId,
+            @PathVariable("caseId") UUID loanServicingCaseId,
             @ModelAttribute FilterRequest<LoanServicingEventDTO> filterRequest) {
 
         return service.findAll(loanServicingCaseId, filterRequest)
@@ -32,8 +35,8 @@ public class LoanServicingEventController {
     @PostMapping
     @Operation(summary = "Create a new loan servicing event")
     public Mono<ResponseEntity<LoanServicingEventDTO>> create(
-            @PathVariable("caseId") Long loanServicingCaseId,
-            @RequestBody LoanServicingEventDTO dto) {
+            @PathVariable("caseId") UUID loanServicingCaseId,
+            @Valid @RequestBody LoanServicingEventDTO dto) {
 
         return service.create(loanServicingCaseId, dto)
                 .map(ResponseEntity::ok);
@@ -42,8 +45,8 @@ public class LoanServicingEventController {
     @GetMapping("/{eventId}")
     @Operation(summary = "Get a loan servicing event by ID")
     public Mono<ResponseEntity<LoanServicingEventDTO>> getById(
-            @PathVariable("caseId") Long loanServicingCaseId,
-            @PathVariable("eventId") Long loanServicingEventId) {
+            @PathVariable("caseId") UUID loanServicingCaseId,
+            @PathVariable("eventId") UUID loanServicingEventId) {
 
         return service.getById(loanServicingCaseId, loanServicingEventId)
                 .map(ResponseEntity::ok);
@@ -52,9 +55,9 @@ public class LoanServicingEventController {
     @PutMapping("/{eventId}")
     @Operation(summary = "Update a loan servicing event")
     public Mono<ResponseEntity<LoanServicingEventDTO>> update(
-            @PathVariable("caseId") Long loanServicingCaseId,
-            @PathVariable("eventId") Long loanServicingEventId,
-            @RequestBody LoanServicingEventDTO dto) {
+            @PathVariable("caseId") UUID loanServicingCaseId,
+            @PathVariable("eventId") UUID loanServicingEventId,
+            @Valid @RequestBody LoanServicingEventDTO dto) {
 
         return service.update(loanServicingCaseId, loanServicingEventId, dto)
                 .map(ResponseEntity::ok);
@@ -63,8 +66,8 @@ public class LoanServicingEventController {
     @DeleteMapping("/{eventId}")
     @Operation(summary = "Delete a loan servicing event")
     public Mono<ResponseEntity<Void>> delete(
-            @PathVariable("caseId") Long loanServicingCaseId,
-            @PathVariable("eventId") Long loanServicingEventId) {
+            @PathVariable("caseId") UUID loanServicingCaseId,
+            @PathVariable("eventId") UUID loanServicingEventId) {
 
         return service.delete(loanServicingCaseId, loanServicingEventId)
                 .thenReturn(ResponseEntity.noContent().build());
