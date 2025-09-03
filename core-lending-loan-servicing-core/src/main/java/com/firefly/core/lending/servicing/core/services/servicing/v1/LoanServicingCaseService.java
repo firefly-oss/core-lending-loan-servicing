@@ -5,6 +5,8 @@ import com.firefly.common.core.queries.PaginationResponse;
 import com.firefly.core.lending.servicing.interfaces.dtos.servicing.v1.LoanServicingCaseDTO;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 public interface LoanServicingCaseService {
     /**
      * Retrieves a paginated list of LoanServicingCaseDTO records based on the given filter criteria.
@@ -29,7 +31,7 @@ public interface LoanServicingCaseService {
      * @return a Mono emitting the {@code LoanServicingCaseDTO} corresponding to the provided ID,
      *         or completes empty if no such loan servicing case exists
      */
-    Mono<LoanServicingCaseDTO> getById(Long loanServicingCaseId);
+    Mono<LoanServicingCaseDTO> getById(UUID loanServicingCaseId);
 
     /**
      * Updates an existing loan servicing case with the provided data.
@@ -38,7 +40,7 @@ public interface LoanServicingCaseService {
      * @param dto The data transfer object containing the updated values for the loan servicing case.
      * @return A Mono containing the updated LoanServicingCaseDTO.
      */
-    Mono<LoanServicingCaseDTO> update(Long loanServicingCaseId, LoanServicingCaseDTO dto);
+    Mono<LoanServicingCaseDTO> update(UUID loanServicingCaseId, LoanServicingCaseDTO dto);
 
     /**
      * Deletes a loan servicing case by its unique identifier.
@@ -46,5 +48,5 @@ public interface LoanServicingCaseService {
      * @param loanServicingCaseId the unique identifier of the loan servicing case to be deleted
      * @return a Mono signaling the completion of the delete operation
      */
-    Mono<Void> delete(Long loanServicingCaseId);
+    Mono<Void> delete(UUID loanServicingCaseId);
 }

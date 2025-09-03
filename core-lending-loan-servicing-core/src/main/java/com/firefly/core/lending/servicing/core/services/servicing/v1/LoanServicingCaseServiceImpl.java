@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @Service
 @Transactional
 public class LoanServicingCaseServiceImpl implements LoanServicingCaseService {
@@ -38,13 +40,13 @@ public class LoanServicingCaseServiceImpl implements LoanServicingCaseService {
     }
 
     @Override
-    public Mono<LoanServicingCaseDTO> getById(Long loanServicingCaseId) {
+    public Mono<LoanServicingCaseDTO> getById(UUID loanServicingCaseId) {
         return repository.findById(loanServicingCaseId)
                 .map(mapper::toDTO);
     }
 
     @Override
-    public Mono<LoanServicingCaseDTO> update(Long loanServicingCaseId, LoanServicingCaseDTO dto) {
+    public Mono<LoanServicingCaseDTO> update(UUID loanServicingCaseId, LoanServicingCaseDTO dto) {
         return repository.findById(loanServicingCaseId)
                 .flatMap(existingEntity -> {
                     LoanServicingCase updatedEntity = mapper.toEntity(dto);
@@ -55,7 +57,7 @@ public class LoanServicingCaseServiceImpl implements LoanServicingCaseService {
     }
 
     @Override
-    public Mono<Void> delete(Long loanServicingCaseId) {
+    public Mono<Void> delete(UUID loanServicingCaseId) {
         return repository.deleteById(loanServicingCaseId);
     }
 }

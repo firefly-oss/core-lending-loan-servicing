@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @Service
 @Transactional
 public class LoanServicingEventServiceImpl implements LoanServicingEventService {
@@ -23,7 +25,7 @@ public class LoanServicingEventServiceImpl implements LoanServicingEventService 
     private LoanServicingEventMapper mapper;
 
     @Override
-    public Mono<PaginationResponse<LoanServicingEventDTO>> findAll(Long loanServicingCaseId, FilterRequest<LoanServicingEventDTO> filterRequest) {
+    public Mono<PaginationResponse<LoanServicingEventDTO>> findAll(UUID loanServicingCaseId, FilterRequest<LoanServicingEventDTO> filterRequest) {
         filterRequest.getFilters().setLoanServicingCaseId(loanServicingCaseId);
         return FilterUtils.createFilter(
                 LoanServicingEvent.class,
@@ -32,7 +34,7 @@ public class LoanServicingEventServiceImpl implements LoanServicingEventService 
     }
 
     @Override
-    public Mono<LoanServicingEventDTO> create(Long loanServicingCaseId, LoanServicingEventDTO dto) {
+    public Mono<LoanServicingEventDTO> create(UUID loanServicingCaseId, LoanServicingEventDTO dto) {
         dto.setLoanServicingCaseId(loanServicingCaseId);
         LoanServicingEvent entity = mapper.toEntity(dto);
         return repository.save(entity)
@@ -40,14 +42,14 @@ public class LoanServicingEventServiceImpl implements LoanServicingEventService 
     }
 
     @Override
-    public Mono<LoanServicingEventDTO> getById(Long loanServicingCaseId, Long loanServicingEventId) {
+    public Mono<LoanServicingEventDTO> getById(UUID loanServicingCaseId, UUID loanServicingEventId) {
         return repository.findById(loanServicingEventId)
                 .filter(event -> event.getLoanServicingCaseId().equals(loanServicingCaseId))
                 .map(mapper::toDTO);
     }
 
     @Override
-    public Mono<LoanServicingEventDTO> update(Long loanServicingCaseId, Long loanServicingEventId, LoanServicingEventDTO dto) {
+    public Mono<LoanServicingEventDTO> update(UUID loanServicingCaseId, UUID loanServicingEventId, LoanServicingEventDTO dto) {
         return repository.findById(loanServicingEventId)
                 .filter(entity -> entity.getLoanServicingCaseId().equals(loanServicingCaseId))
                 .flatMap(existingEntity -> {
@@ -61,7 +63,7 @@ public class LoanServicingEventServiceImpl implements LoanServicingEventService 
     }
 
     @Override
-    public Mono<Void> delete(Long loanServicingCaseId, Long loanServicingEventId) {
+    public Mono<Void> delete(UUID loanServicingCaseId, UUID loanServicingEventId) {
         return repository.findById(loanServicingEventId)
                 .filter(event -> event.getLoanServicingCaseId().equals(loanServicingCaseId))
                 .flatMap(repository::delete);

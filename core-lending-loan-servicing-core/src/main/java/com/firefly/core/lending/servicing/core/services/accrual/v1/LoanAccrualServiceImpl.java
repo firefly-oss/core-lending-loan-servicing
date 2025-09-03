@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -26,7 +28,7 @@ public class LoanAccrualServiceImpl implements LoanAccrualService {
     private LoanAccrualMapper mapper;
 
     @Override
-    public Mono<PaginationResponse<LoanAccrualDTO>> findAll(Long loanServicingCaseId, FilterRequest<LoanAccrualDTO> filterRequest) {
+    public Mono<PaginationResponse<LoanAccrualDTO>> findAll(UUID loanServicingCaseId, FilterRequest<LoanAccrualDTO> filterRequest) {
         filterRequest.getFilters().setLoanServicingCaseId(loanServicingCaseId);
         return FilterUtils.createFilter(
                 LoanAccrual.class,
@@ -35,7 +37,7 @@ public class LoanAccrualServiceImpl implements LoanAccrualService {
     }
 
     @Override
-    public Mono<LoanAccrualDTO> create(Long loanServicingCaseId, LoanAccrualDTO dto) {
+    public Mono<LoanAccrualDTO> create(UUID loanServicingCaseId, LoanAccrualDTO dto) {
         return Mono.just(dto)
                 .doOnNext(d -> d.setLoanServicingCaseId(loanServicingCaseId))
                 .map(mapper::toEntity)
@@ -48,14 +50,14 @@ public class LoanAccrualServiceImpl implements LoanAccrualService {
     }
 
     @Override
-    public Mono<LoanAccrualDTO> getById(Long loanServicingCaseId, Long loanAccrualId) {
+    public Mono<LoanAccrualDTO> getById(UUID loanServicingCaseId, UUID loanAccrualId) {
         return Mono.defer(() -> repository.findById(loanAccrualId)
                 .filter(entity -> Objects.equals(entity.getLoanServicingCaseId(), loanServicingCaseId))
                 .map(mapper::toDTO));
     }
 
     @Override
-    public Mono<LoanAccrualDTO> update(Long loanServicingCaseId, Long loanAccrualId, LoanAccrualDTO dto) {
+    public Mono<LoanAccrualDTO> update(UUID loanServicingCaseId, UUID loanAccrualId, LoanAccrualDTO dto) {
         return repository.findById(loanAccrualId)
                 .filter(entity -> Objects.equals(entity.getLoanServicingCaseId(), loanServicingCaseId))
                 .flatMap(existingEntity -> {
@@ -70,7 +72,7 @@ public class LoanAccrualServiceImpl implements LoanAccrualService {
     }
 
     @Override
-    public Mono<Void> delete(Long loanServicingCaseId, Long loanAccrualId) {
+    public Mono<Void> delete(UUID loanServicingCaseId, UUID loanAccrualId) {
         return repository.findById(loanAccrualId)
                 .filter(entity -> Objects.equals(entity.getLoanServicingCaseId(), loanServicingCaseId))
                 .flatMap(repository::delete);

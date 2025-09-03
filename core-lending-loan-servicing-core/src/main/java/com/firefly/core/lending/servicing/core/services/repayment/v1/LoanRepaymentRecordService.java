@@ -5,6 +5,8 @@ import com.firefly.common.core.queries.PaginationResponse;
 import com.firefly.core.lending.servicing.interfaces.dtos.repayment.v1.LoanRepaymentRecordDTO;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 public interface LoanRepaymentRecordService {
 
     /**
@@ -15,7 +17,7 @@ public interface LoanRepaymentRecordService {
      * @param filterRequest the filtering criteria and pagination details encapsulated in a FilterRequest object
      * @return a Mono containing a PaginationResponse with the list of LoanRepaymentRecordDTO records
      */
-    Mono<PaginationResponse<LoanRepaymentRecordDTO>> findAll(Long loanServicingCaseId,
+    Mono<PaginationResponse<LoanRepaymentRecordDTO>> findAll(UUID loanServicingCaseId,
                                                              FilterRequest<LoanRepaymentRecordDTO> filterRequest);
 
     /**
@@ -25,7 +27,7 @@ public interface LoanRepaymentRecordService {
      * @param dto the data transfer object containing details of the loan repayment record to be created
      * @return a Mono emitting the created LoanRepaymentRecordDTO instance
      */
-    Mono<LoanRepaymentRecordDTO> create(Long loanServicingCaseId, LoanRepaymentRecordDTO dto);
+    Mono<LoanRepaymentRecordDTO> create(UUID loanServicingCaseId, LoanRepaymentRecordDTO dto);
 
     /**
      * Retrieves the details of a specific loan repayment record for a given loan servicing case.
@@ -35,7 +37,7 @@ public interface LoanRepaymentRecordService {
      * @return a Mono emitting the LoanRepaymentRecordDTO corresponding to the specified identifiers,
      *         or completes empty if no such loan repayment record exists
      */
-    Mono<LoanRepaymentRecordDTO> getById(Long loanServicingCaseId, Long loanRepaymentRecordId);
+    Mono<LoanRepaymentRecordDTO> getById(UUID loanServicingCaseId, UUID loanRepaymentRecordId);
 
     /**
      * Updates an existing loan repayment record with the provided data.
@@ -45,7 +47,7 @@ public interface LoanRepaymentRecordService {
      * @param dto the data transfer object containing the updated values for the loan repayment record
      * @return a Mono containing the updated LoanRepaymentRecordDTO
      */
-    Mono<LoanRepaymentRecordDTO> update(Long loanServicingCaseId, Long loanRepaymentRecordId,
+    Mono<LoanRepaymentRecordDTO> update(UUID loanServicingCaseId, UUID loanRepaymentRecordId,
                                         LoanRepaymentRecordDTO dto);
 
     /**
@@ -55,5 +57,5 @@ public interface LoanRepaymentRecordService {
      * @param loanRepaymentRecordId the unique identifier of the loan repayment record to be deleted
      * @return a Mono signaling the completion of the delete operation
      */
-    Mono<Void> delete(Long loanServicingCaseId, Long loanRepaymentRecordId);
+    Mono<Void> delete(UUID loanServicingCaseId, UUID loanRepaymentRecordId);
 }

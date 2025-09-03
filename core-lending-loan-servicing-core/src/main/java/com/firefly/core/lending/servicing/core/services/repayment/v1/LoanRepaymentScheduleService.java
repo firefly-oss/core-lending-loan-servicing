@@ -5,6 +5,8 @@ import com.firefly.common.core.queries.PaginationResponse;
 import com.firefly.core.lending.servicing.interfaces.dtos.repayment.v1.LoanRepaymentScheduleDTO;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 public interface LoanRepaymentScheduleService {
 
     /**
@@ -15,7 +17,7 @@ public interface LoanRepaymentScheduleService {
      * @param filterRequest the filtering criteria and pagination details encapsulated in a FilterRequest object
      * @return a Mono containing a PaginationResponse with the list of LoanRepaymentScheduleDTO records
      */
-    Mono<PaginationResponse<LoanRepaymentScheduleDTO>> findAll(Long loanServicingCaseId,
+    Mono<PaginationResponse<LoanRepaymentScheduleDTO>> findAll(UUID loanServicingCaseId,
                                                                FilterRequest<LoanRepaymentScheduleDTO> filterRequest);
 
     /**
@@ -25,7 +27,7 @@ public interface LoanRepaymentScheduleService {
      * @param dto the data transfer object containing details of the loan repayment schedule to be created
      * @return a Mono emitting the created LoanRepaymentScheduleDTO instance
      */
-    Mono<LoanRepaymentScheduleDTO> create(Long loanServicingCaseId, LoanRepaymentScheduleDTO dto);
+    Mono<LoanRepaymentScheduleDTO> create(UUID loanServicingCaseId, LoanRepaymentScheduleDTO dto);
 
     /**
      * Retrieves the details of a specific loan repayment schedule for a given loan servicing case.
@@ -35,7 +37,7 @@ public interface LoanRepaymentScheduleService {
      * @return a Mono emitting the LoanRepaymentScheduleDTO corresponding to the specified identifiers,
      *         or completes empty if no such loan repayment schedule exists
      */
-    Mono<LoanRepaymentScheduleDTO> getById(Long loanServicingCaseId, Long loanRepaymentScheduleId);
+    Mono<LoanRepaymentScheduleDTO> getById(UUID loanServicingCaseId, UUID loanRepaymentScheduleId);
 
     /**
      * Updates an existing loan repayment schedule record with the provided data.
@@ -45,7 +47,7 @@ public interface LoanRepaymentScheduleService {
      * @param dto the data transfer object containing the updated values for the loan repayment schedule
      * @return a Mono containing the updated LoanRepaymentScheduleDTO
      */
-    Mono<LoanRepaymentScheduleDTO> update(Long loanServicingCaseId, Long loanRepaymentScheduleId,
+    Mono<LoanRepaymentScheduleDTO> update(UUID loanServicingCaseId, UUID loanRepaymentScheduleId,
                                           LoanRepaymentScheduleDTO dto);
 
     /**
@@ -55,5 +57,5 @@ public interface LoanRepaymentScheduleService {
      * @param loanRepaymentScheduleId the unique identifier of the loan repayment schedule to be deleted
      * @return a Mono signaling the completion of the delete operation
      */
-    Mono<Void> delete(Long loanServicingCaseId, Long loanRepaymentScheduleId);
+    Mono<Void> delete(UUID loanServicingCaseId, UUID loanRepaymentScheduleId);
 }

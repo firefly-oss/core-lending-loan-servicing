@@ -5,6 +5,8 @@ import com.firefly.common.core.queries.PaginationResponse;
 import com.firefly.core.lending.servicing.interfaces.dtos.disbursement.v1.LoanDisbursementDTO;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 public interface LoanDisbursementService {
 
     /**
@@ -15,7 +17,7 @@ public interface LoanDisbursementService {
      * @param filterRequest the filtering criteria and pagination details encapsulated in a FilterRequest object
      * @return a Mono containing a PaginationResponse with the list of LoanDisbursementDTO records
      */
-    Mono<PaginationResponse<LoanDisbursementDTO>> findAll(Long loanServicingCaseId,
+    Mono<PaginationResponse<LoanDisbursementDTO>> findAll(UUID loanServicingCaseId,
                                                           FilterRequest<LoanDisbursementDTO> filterRequest);
 
     /**
@@ -25,7 +27,7 @@ public interface LoanDisbursementService {
      * @param dto the data transfer object containing details of the loan disbursement to be created
      * @return a Mono emitting the created LoanDisbursementDTO instance
      */
-    Mono<LoanDisbursementDTO> create(Long loanServicingCaseId, LoanDisbursementDTO dto);
+    Mono<LoanDisbursementDTO> create(UUID loanServicingCaseId, LoanDisbursementDTO dto);
 
     /**
      * Retrieves the details of a specific loan disbursement for a given loan servicing case.
@@ -35,7 +37,7 @@ public interface LoanDisbursementService {
      * @return a Mono emitting the LoanDisbursementDTO corresponding to the specified identifiers,
      *         or completes empty if no such loan disbursement exists
      */
-    Mono<LoanDisbursementDTO> getById(Long loanServicingCaseId, Long loanDisbursementId);
+    Mono<LoanDisbursementDTO> getById(UUID loanServicingCaseId, UUID loanDisbursementId);
 
     /**
      * Updates an existing loan disbursement record with the provided data.
@@ -45,7 +47,7 @@ public interface LoanDisbursementService {
      * @param dto the data transfer object containing the updated values for the loan disbursement
      * @return a Mono containing the updated LoanDisbursementDTO
      */
-    Mono<LoanDisbursementDTO> update(Long loanServicingCaseId, Long loanDisbursementId, LoanDisbursementDTO dto);
+    Mono<LoanDisbursementDTO> update(UUID loanServicingCaseId, UUID loanDisbursementId, LoanDisbursementDTO dto);
 
     /**
      * Deletes a loan disbursement associated with a specified loan servicing case.
@@ -54,5 +56,5 @@ public interface LoanDisbursementService {
      * @param loanDisbursementId the unique identifier of the loan disbursement to be deleted
      * @return a Mono signaling the completion of the delete operation
      */
-    Mono<Void> delete(Long loanServicingCaseId, Long loanDisbursementId);
+    Mono<Void> delete(UUID loanServicingCaseId, UUID loanDisbursementId);
 }
