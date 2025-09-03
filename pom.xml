@@ -18,6 +18,7 @@
         <module>core-lending-loan-servicing-interfaces</module>
         <module>core-lending-loan-servicing-models</module>
         <module>core-lending-loan-servicing-web</module>
+        <module>core-lending-loan-servicing-sdk</module>
     </modules>
 
     <properties>
@@ -37,6 +38,11 @@
             <dependency>
                 <groupId>com.firefly</groupId>
                 <artifactId>core-lending-loan-servicing-models</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.firefly</groupId>
+                <artifactId>core-lending-loan-servicing-sdk</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
