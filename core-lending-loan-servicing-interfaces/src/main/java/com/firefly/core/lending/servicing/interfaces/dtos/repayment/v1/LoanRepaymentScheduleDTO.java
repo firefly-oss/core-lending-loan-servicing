@@ -7,9 +7,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -18,19 +20,47 @@ import java.time.LocalDateTime;
 public class LoanRepaymentScheduleDTO {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long loanRepaymentScheduleId;
+    private UUID loanRepaymentScheduleId;
 
     @FilterableId
-    private Long loanServicingCaseId;
+    @NotNull(message = "Loan servicing case ID is required")
+    private UUID loanServicingCaseId;
 
+    @NotNull(message = "Installment number is required")
+    @Min(value = 1, message = "Installment number must be at least 1")
     private Integer installmentNumber;
+
+    @NotNull(message = "Due date is required")
     private LocalDate dueDate;
+
+    @NotNull(message = "Principal due is required")
+    @DecimalMin(value = "0.0", message = "Principal due cannot be negative")
+    @Digits(integer = 15, fraction = 2, message = "Principal due must have at most 15 integer digits and 2 decimal places")
     private BigDecimal principalDue;
+
+    @NotNull(message = "Interest due is required")
+    @DecimalMin(value = "0.0", message = "Interest due cannot be negative")
+    @Digits(integer = 15, fraction = 2, message = "Interest due must have at most 15 integer digits and 2 decimal places")
     private BigDecimal interestDue;
+
+    @NotNull(message = "Fee due is required")
+    @DecimalMin(value = "0.0", message = "Fee due cannot be negative")
+    @Digits(integer = 15, fraction = 2, message = "Fee due must have at most 15 integer digits and 2 decimal places")
     private BigDecimal feeDue;
+
+    @NotNull(message = "Total due is required")
+    @DecimalMin(value = "0.0", message = "Total due cannot be negative")
+    @Digits(integer = 15, fraction = 2, message = "Total due must have at most 15 integer digits and 2 decimal places")
     private BigDecimal totalDue;
+
+    @NotNull(message = "Paid flag is required")
     private Boolean isPaid;
+
+    @PastOrPresent(message = "Paid date cannot be in the future")
     private LocalDate paidDate;
+
+    @DecimalMin(value = "0.0", message = "Paid amount cannot be negative")
+    @Digits(integer = 15, fraction = 2, message = "Paid amount must have at most 15 integer digits and 2 decimal places")
     private BigDecimal paidAmount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

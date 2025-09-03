@@ -8,8 +8,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -17,13 +19,21 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class LoanServicingEventDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long loanServicingEventId;
+    private UUID loanServicingEventId;
 
     @FilterableId
-    private Long loanServicingCaseId;
+    @NotNull(message = "Loan servicing case ID is required")
+    private UUID loanServicingCaseId;
 
+    @NotNull(message = "Event type is required")
     private EventTypeEnum eventType;
+
+    @NotNull(message = "Event date is required")
+    @PastOrPresent(message = "Event date cannot be in the future")
     private LocalDate eventDate;
+
+    @NotBlank(message = "Description is required")
+    @Size(max = 1000, message = "Description cannot exceed 1000 characters")
     private String description;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
