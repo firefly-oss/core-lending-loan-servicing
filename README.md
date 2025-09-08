@@ -221,7 +221,7 @@ erDiagram
 The microservice provides comprehensive REST APIs documented with OpenAPI 3.0:
 
 - **Local Environment**: http://localhost:8080/swagger-ui.html
-- **Development Environment**: http://core.catalis.vc/loan-servicing/swagger-ui.html
+- **Development Environment**: http://core.getfirefly.io/loan-servicing/swagger-ui.html
 
 ### API Endpoints Overview
 
@@ -353,8 +353,8 @@ spring:
 ### Development Environment
 
 The service is deployed in the development environment at:
-- **Base URL**: http://core.catalis.vc/loan-servicing
-- **API Docs**: http://core.catalis.vc/loan-servicing/swagger-ui.html
+- **Base URL**: http://core.getfirefly.io/loan-servicing
+- **API Docs**: http://core.getfirefly.io/loan-servicing/swagger-ui.html
 
 ### Production Deployment
 
