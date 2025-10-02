@@ -41,7 +41,7 @@ public class LoanAccrualController {
 
     @GetMapping
     @Operation(summary = "List/Search accruals for a servicing case")
-    public Mono<ResponseEntity<PaginationResponse<LoanAccrualDTO>>> findAll(
+    public Mono<ResponseEntity<PaginationResponse<LoanAccrualDTO>>> findAllAccruals(
             @PathVariable("caseId") UUID loanServicingCaseId,
             @ModelAttribute FilterRequest<LoanAccrualDTO> filterRequest) {
 
@@ -51,7 +51,7 @@ public class LoanAccrualController {
 
     @PostMapping
     @Operation(summary = "Create a loan accrual record")
-    public Mono<ResponseEntity<LoanAccrualDTO>> create(
+    public Mono<ResponseEntity<LoanAccrualDTO>> createAccrual(
             @PathVariable("caseId") UUID loanServicingCaseId,
             @Valid @RequestBody LoanAccrualDTO dto) {
 
@@ -61,7 +61,7 @@ public class LoanAccrualController {
 
     @GetMapping("/{accrualId}")
     @Operation(summary = "Get a loan accrual by ID")
-    public Mono<ResponseEntity<LoanAccrualDTO>> getById(
+    public Mono<ResponseEntity<LoanAccrualDTO>> getAccrualById(
             @PathVariable("caseId") UUID loanServicingCaseId,
             @PathVariable("accrualId") UUID loanAccrualId) {
 
@@ -71,7 +71,7 @@ public class LoanAccrualController {
 
     @PutMapping("/{accrualId}")
     @Operation(summary = "Update a loan accrual record")
-    public Mono<ResponseEntity<LoanAccrualDTO>> update(
+    public Mono<ResponseEntity<LoanAccrualDTO>> updateAccrual(
             @PathVariable("caseId") UUID loanServicingCaseId,
             @PathVariable("accrualId") UUID loanAccrualId,
             @Valid @RequestBody LoanAccrualDTO dto) {
@@ -82,7 +82,7 @@ public class LoanAccrualController {
 
     @DeleteMapping("/{accrualId}")
     @Operation(summary = "Delete a loan accrual record")
-    public Mono<ResponseEntity<Void>> delete(
+    public Mono<ResponseEntity<Void>> deleteAccrual(
             @PathVariable("caseId") UUID loanServicingCaseId,
             @PathVariable("accrualId") UUID loanAccrualId) {
 

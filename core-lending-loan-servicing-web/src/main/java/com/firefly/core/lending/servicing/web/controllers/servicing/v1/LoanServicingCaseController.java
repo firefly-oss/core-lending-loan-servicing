@@ -41,7 +41,7 @@ public class LoanServicingCaseController {
 
     @GetMapping
     @Operation(summary = "List/Search loan servicing cases")
-    public Mono<ResponseEntity<PaginationResponse<LoanServicingCaseDTO>>> findAll(
+    public Mono<ResponseEntity<PaginationResponse<LoanServicingCaseDTO>>> findAllServicingCases(
             @ModelAttribute FilterRequest<LoanServicingCaseDTO> filterRequest) {
 
         return service.findAll(filterRequest)
@@ -50,21 +50,21 @@ public class LoanServicingCaseController {
 
     @PostMapping
     @Operation(summary = "Create a loan servicing case")
-    public Mono<ResponseEntity<LoanServicingCaseDTO>> create(@Valid @RequestBody LoanServicingCaseDTO dto) {
+    public Mono<ResponseEntity<LoanServicingCaseDTO>> createServicingCase(@Valid @RequestBody LoanServicingCaseDTO dto) {
         return service.create(dto)
                 .map(ResponseEntity::ok);
     }
 
     @GetMapping("/{caseId}")
     @Operation(summary = "Get a loan servicing case by ID")
-    public Mono<ResponseEntity<LoanServicingCaseDTO>> getById(@PathVariable("caseId") UUID loanServicingCaseId) {
+    public Mono<ResponseEntity<LoanServicingCaseDTO>> getServicingCaseById(@PathVariable("caseId") UUID loanServicingCaseId) {
         return service.getById(loanServicingCaseId)
                 .map(ResponseEntity::ok);
     }
 
     @PutMapping("/{caseId}")
     @Operation(summary = "Update a loan servicing case")
-    public Mono<ResponseEntity<LoanServicingCaseDTO>> update(
+    public Mono<ResponseEntity<LoanServicingCaseDTO>> updateServicingCase(
             @PathVariable("caseId") UUID loanServicingCaseId,
             @Valid @RequestBody LoanServicingCaseDTO dto) {
 
@@ -74,7 +74,7 @@ public class LoanServicingCaseController {
 
     @DeleteMapping("/{caseId}")
     @Operation(summary = "Delete a loan servicing case")
-    public Mono<ResponseEntity<Void>> delete(@PathVariable("caseId") UUID loanServicingCaseId) {
+    public Mono<ResponseEntity<Void>> deleteServicingCase(@PathVariable("caseId") UUID loanServicingCaseId) {
         return service.delete(loanServicingCaseId)
                 .thenReturn(ResponseEntity.noContent().build());
     }

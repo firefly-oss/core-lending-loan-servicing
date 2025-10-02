@@ -41,7 +41,7 @@ public class LoanServicingEventController {
 
     @GetMapping
     @Operation(summary = "List/Search loan servicing events")
-    public Mono<ResponseEntity<PaginationResponse<LoanServicingEventDTO>>> findAll(
+    public Mono<ResponseEntity<PaginationResponse<LoanServicingEventDTO>>> findAllServicingEvents(
             @PathVariable("caseId") UUID loanServicingCaseId,
             @ModelAttribute FilterRequest<LoanServicingEventDTO> filterRequest) {
 
@@ -51,7 +51,7 @@ public class LoanServicingEventController {
 
     @PostMapping
     @Operation(summary = "Create a new loan servicing event")
-    public Mono<ResponseEntity<LoanServicingEventDTO>> create(
+    public Mono<ResponseEntity<LoanServicingEventDTO>> createServicingEvent(
             @PathVariable("caseId") UUID loanServicingCaseId,
             @Valid @RequestBody LoanServicingEventDTO dto) {
 
@@ -61,7 +61,7 @@ public class LoanServicingEventController {
 
     @GetMapping("/{eventId}")
     @Operation(summary = "Get a loan servicing event by ID")
-    public Mono<ResponseEntity<LoanServicingEventDTO>> getById(
+    public Mono<ResponseEntity<LoanServicingEventDTO>> getServicingEventById(
             @PathVariable("caseId") UUID loanServicingCaseId,
             @PathVariable("eventId") UUID loanServicingEventId) {
 
@@ -71,7 +71,7 @@ public class LoanServicingEventController {
 
     @PutMapping("/{eventId}")
     @Operation(summary = "Update a loan servicing event")
-    public Mono<ResponseEntity<LoanServicingEventDTO>> update(
+    public Mono<ResponseEntity<LoanServicingEventDTO>> updateServicingEvent(
             @PathVariable("caseId") UUID loanServicingCaseId,
             @PathVariable("eventId") UUID loanServicingEventId,
             @Valid @RequestBody LoanServicingEventDTO dto) {
@@ -82,7 +82,7 @@ public class LoanServicingEventController {
 
     @DeleteMapping("/{eventId}")
     @Operation(summary = "Delete a loan servicing event")
-    public Mono<ResponseEntity<Void>> delete(
+    public Mono<ResponseEntity<Void>> deleteServicingEvent(
             @PathVariable("caseId") UUID loanServicingCaseId,
             @PathVariable("eventId") UUID loanServicingEventId) {
 

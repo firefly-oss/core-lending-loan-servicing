@@ -41,7 +41,7 @@ public class LoanRepaymentRecordController {
 
     @GetMapping
     @Operation(summary = "List/Search repayment records for a servicing case")
-    public Mono<ResponseEntity<PaginationResponse<LoanRepaymentRecordDTO>>> findAll(
+    public Mono<ResponseEntity<PaginationResponse<LoanRepaymentRecordDTO>>> findAllRepaymentRecords(
             @PathVariable("caseId") UUID loanServicingCaseId,
             @ModelAttribute FilterRequest<LoanRepaymentRecordDTO> filterRequest) {
 
@@ -51,7 +51,7 @@ public class LoanRepaymentRecordController {
 
     @PostMapping
     @Operation(summary = "Create a repayment record")
-    public Mono<ResponseEntity<LoanRepaymentRecordDTO>> create(
+    public Mono<ResponseEntity<LoanRepaymentRecordDTO>> createRepaymentRecord(
             @PathVariable("caseId") UUID loanServicingCaseId,
             @Valid @RequestBody LoanRepaymentRecordDTO dto) {
 
@@ -61,7 +61,7 @@ public class LoanRepaymentRecordController {
 
     @GetMapping("/{recordId}")
     @Operation(summary = "Get a repayment record by ID")
-    public Mono<ResponseEntity<LoanRepaymentRecordDTO>> getById(
+    public Mono<ResponseEntity<LoanRepaymentRecordDTO>> getRepaymentRecordById(
             @PathVariable("caseId") UUID loanServicingCaseId,
             @PathVariable("recordId") UUID loanRepaymentRecordId) {
 
@@ -71,7 +71,7 @@ public class LoanRepaymentRecordController {
 
     @PutMapping("/{recordId}")
     @Operation(summary = "Update a repayment record")
-    public Mono<ResponseEntity<LoanRepaymentRecordDTO>> update(
+    public Mono<ResponseEntity<LoanRepaymentRecordDTO>> updateRepaymentRecord(
             @PathVariable("caseId") UUID loanServicingCaseId,
             @PathVariable("recordId") UUID loanRepaymentRecordId,
             @Valid @RequestBody LoanRepaymentRecordDTO dto) {
@@ -82,7 +82,7 @@ public class LoanRepaymentRecordController {
 
     @DeleteMapping("/{recordId}")
     @Operation(summary = "Delete a repayment record")
-    public Mono<ResponseEntity<Void>> delete(
+    public Mono<ResponseEntity<Void>> deleteRepaymentRecord(
             @PathVariable("caseId") UUID loanServicingCaseId,
             @PathVariable("recordId") UUID loanRepaymentRecordId) {
 

@@ -41,7 +41,7 @@ public class LoanRateChangeController {
 
     @GetMapping
     @Operation(summary = "List/Search rate changes for a servicing case")
-    public Mono<ResponseEntity<PaginationResponse<LoanRateChangeDTO>>> findAll(
+    public Mono<ResponseEntity<PaginationResponse<LoanRateChangeDTO>>> findAllRateChanges(
             @PathVariable("caseId") UUID loanServicingCaseId,
             @ModelAttribute FilterRequest<LoanRateChangeDTO> filterRequest) {
 
@@ -51,7 +51,7 @@ public class LoanRateChangeController {
 
     @PostMapping
     @Operation(summary = "Create a new loan rate change")
-    public Mono<ResponseEntity<LoanRateChangeDTO>> create(
+    public Mono<ResponseEntity<LoanRateChangeDTO>> createRateChange(
             @PathVariable("caseId") UUID loanServicingCaseId,
             @Valid @RequestBody LoanRateChangeDTO dto) {
 
@@ -61,7 +61,7 @@ public class LoanRateChangeController {
 
     @GetMapping("/{rateChangeId}")
     @Operation(summary = "Get a loan rate change by ID")
-    public Mono<ResponseEntity<LoanRateChangeDTO>> getById(
+    public Mono<ResponseEntity<LoanRateChangeDTO>> getRateChangeById(
             @PathVariable("caseId") UUID loanServicingCaseId,
             @PathVariable("rateChangeId") UUID loanRateChangeId) {
 
@@ -71,7 +71,7 @@ public class LoanRateChangeController {
 
     @PutMapping("/{rateChangeId}")
     @Operation(summary = "Update a loan rate change")
-    public Mono<ResponseEntity<LoanRateChangeDTO>> update(
+    public Mono<ResponseEntity<LoanRateChangeDTO>> updateRateChange(
             @PathVariable("caseId") UUID loanServicingCaseId,
             @PathVariable("rateChangeId") UUID loanRateChangeId,
             @Valid @RequestBody LoanRateChangeDTO dto) {
@@ -82,7 +82,7 @@ public class LoanRateChangeController {
 
     @DeleteMapping("/{rateChangeId}")
     @Operation(summary = "Delete a loan rate change record")
-    public Mono<ResponseEntity<Void>> delete(
+    public Mono<ResponseEntity<Void>> deleteRateChange(
             @PathVariable("caseId") UUID loanServicingCaseId,
             @PathVariable("rateChangeId") UUID loanRateChangeId) {
 
