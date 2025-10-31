@@ -64,6 +64,8 @@ erDiagram
     LoanServicingCase ||--o{ LoanRateChange : "has many"
     LoanServicingCase ||--o{ LoanServicingEvent : "has many"
     LoanRepaymentSchedule ||--o{ LoanRepaymentRecord : "linked to"
+    LoanDisbursement ||--o{ LoanDisbursementInternalTransaction : "has many"
+    LoanDisbursement ||--o{ LoanDisbursementExternalTransaction : "has many"
 
     LoanServicingCase {
         UUID loan_servicing_case_id PK
@@ -88,6 +90,10 @@ erDiagram
         DECIMAL disbursement_amount "Amount disbursed"
         DATE disbursement_date "Date of disbursement"
         BOOLEAN is_final_disbursement "Final disbursement flag"
+        DisbursementMethodEnum disbursement_method "INTERNAL, EXTERNAL"
+        DisbursementStatusEnum disbursement_status "PENDING, PROCESSING, COMPLETED, FAILED, REVERSED"
+        UUID payment_provider_id "Reference to PSP master data"
+        VARCHAR external_transaction_reference "PSP transaction reference"
         TEXT note "Disbursement notes"
         TIMESTAMP created_at
         TIMESTAMP updated_at
@@ -151,6 +157,38 @@ erDiagram
         EventTypeEnum event_type "RESTRUCTURE, EXTENSION, DEFERMENT, COLLECTION_CALL, NOTICE"
         DATE event_date "Date of event"
         TEXT description "Event description"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    LoanDisbursementInternalTransaction {
+        UUID loan_disbursement_internal_transaction_id PK
+        UUID loan_disbursement_id FK
+        UUID source_account_id "Source account for transfer"
+        UUID destination_account_id "Destination account for transfer"
+        DECIMAL transaction_amount "Transaction amount"
+        VARCHAR transaction_reference "Internal transaction reference"
+        TIMESTAMP transaction_date "Date of transaction"
+        TEXT note "Transaction notes"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    LoanDisbursementExternalTransaction {
+        UUID loan_disbursement_external_transaction_id PK
+        UUID loan_disbursement_id FK
+        UUID payment_provider_id "Reference to PSP master data"
+        VARCHAR psp_transaction_id "PSP transaction ID"
+        VARCHAR psp_transaction_reference "PSP transaction reference"
+        DECIMAL transaction_amount "Transaction amount"
+        VARCHAR transaction_currency "ISO currency code"
+        VARCHAR psp_status "Status from PSP"
+        TEXT psp_status_message "Status message from PSP"
+        VARCHAR recipient_account_number "Recipient account"
+        VARCHAR recipient_name "Recipient name"
+        TIMESTAMP transaction_date "Date of transaction"
+        TEXT psp_response_payload "Full PSP response for audit"
+        TEXT note "Transaction notes"
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
