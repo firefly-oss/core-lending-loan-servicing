@@ -48,8 +48,8 @@ public class LoanServicingCase {
     @Column("product_id")
     private UUID productId;
 
-    @Column("account_id")
-    private UUID accountId;
+    @Column("application_id")
+    private UUID applicationId; // Reference to loan application (from core-lending-loan-origination)
 
     @Column("servicing_status")
     private ServicingStatusEnum servicingStatus;
