@@ -17,6 +17,8 @@
 
 package com.firefly.core.lending.servicing.models.entities.disbursement.v1;
 
+import com.firefly.core.lending.servicing.interfaces.enums.disbursement.v1.DisbursementMethodEnum;
+import com.firefly.core.lending.servicing.interfaces.enums.disbursement.v1.DisbursementStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -55,6 +57,18 @@ public class LoanDisbursement {
 
     @Column("is_final_disbursement")
     private Boolean isFinalDisbursement;
+
+    @Column("disbursement_method")
+    private DisbursementMethodEnum disbursementMethod;
+
+    @Column("disbursement_status")
+    private DisbursementStatusEnum disbursementStatus;
+
+    @Column("payment_provider_id")
+    private UUID paymentProviderId;
+
+    @Column("external_transaction_reference")
+    private String externalTransactionReference;
 
     @Column("note")
     private String note;

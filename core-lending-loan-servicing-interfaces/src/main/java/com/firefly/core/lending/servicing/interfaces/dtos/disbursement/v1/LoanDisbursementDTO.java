@@ -17,6 +17,8 @@
 
 package com.firefly.core.lending.servicing.interfaces.dtos.disbursement.v1;
 
+import com.firefly.core.lending.servicing.interfaces.enums.disbursement.v1.DisbursementMethodEnum;
+import com.firefly.core.lending.servicing.interfaces.enums.disbursement.v1.DisbursementStatusEnum;
 import com.firefly.core.utils.annotations.FilterableId;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -58,9 +60,25 @@ public class LoanDisbursementDTO {
     @NotNull(message = "Final disbursement flag is required")
     private Boolean isFinalDisbursement;
 
+    @NotNull(message = "Disbursement method is required")
+    private DisbursementMethodEnum disbursementMethod;
+
+    @NotNull(message = "Disbursement status is required")
+    private DisbursementStatusEnum disbursementStatus;
+
+    @FilterableId
+    private UUID paymentProviderId;
+
+    @Size(max = 255, message = "External transaction reference cannot exceed 255 characters")
+    private String externalTransactionReference;
+
     @Size(max = 500, message = "Note cannot exceed 500 characters")
     private String note;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime createdAt;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime updatedAt;
 }
 
