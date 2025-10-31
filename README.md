@@ -30,7 +30,7 @@ The microservice follows a clean, modular architecture with clear separation of 
 
 - **Loan Servicing Case Management**: Central management of loan servicing lifecycle
 - **Disbursement Tracking**: Complete disbursement history and final disbursement tracking
-- **Repayment Management**: Scheduled repayments and actual payment records
+- **Installment Management**: Planned installments and actual payment records with internal/external payment tracking
 - **Interest & Fee Accruals**: Automated calculation and tracking of interest, penalties, and fees
 - **Rate Change Management**: Interest rate adjustments with full audit trail
 - **Servicing Events**: Comprehensive event tracking for restructures, extensions, and collections
@@ -58,20 +58,22 @@ The microservice manages a comprehensive loan servicing data model with the foll
 ```mermaid
 erDiagram
     LoanServicingCase ||--o{ LoanDisbursement : "has many"
-    LoanServicingCase ||--o{ LoanRepaymentSchedule : "has many"
-    LoanServicingCase ||--o{ LoanRepaymentRecord : "has many"
+    LoanServicingCase ||--o{ LoanInstallmentPlan : "has many"
+    LoanServicingCase ||--o{ LoanInstallmentRecord : "has many"
     LoanServicingCase ||--o{ LoanAccrual : "has many"
     LoanServicingCase ||--o{ LoanRateChange : "has many"
     LoanServicingCase ||--o{ LoanServicingEvent : "has many"
-    LoanRepaymentSchedule ||--o{ LoanRepaymentRecord : "linked to"
+    LoanInstallmentPlan ||--o{ LoanInstallmentRecord : "linked to"
     LoanDisbursement ||--o{ LoanDisbursementInternalTransaction : "has many"
     LoanDisbursement ||--o{ LoanDisbursementExternalTransaction : "has many"
+    LoanInstallmentRecord ||--o{ LoanInstallmentRecordInternalTransaction : "has many"
+    LoanInstallmentRecord ||--o{ LoanInstallmentRecordExternalTransaction : "has many"
 
     LoanServicingCase {
         UUID loan_servicing_case_id PK
         UUID contract_id FK "Reference to loan contract"
         UUID product_id FK "Reference to loan product"
-        UUID account_id FK "Reference to customer account"
+        UUID application_id FK "Reference to loan application (origination)"
         ServicingStatusEnum servicing_status "ACTIVE, PAID_OFF, CLOSED, DEFAULT, RESTRUCTURED"
         DECIMAL principal_outstanding "Outstanding principal amount"
         DECIMAL interest_outstanding "Outstanding interest amount"
@@ -99,8 +101,8 @@ erDiagram
         TIMESTAMP updated_at
     }
 
-    LoanRepaymentSchedule {
-        UUID loan_repayment_schedule_id PK
+    LoanInstallmentPlan {
+        UUID loan_installment_plan_id PK
         UUID loan_servicing_case_id FK
         INTEGER installment_number "Installment sequence number"
         DATE due_date "Payment due date"
@@ -111,19 +113,60 @@ erDiagram
         BOOLEAN is_paid "Payment status"
         DATE paid_date "Date payment was made"
         DECIMAL paid_amount "Amount actually paid"
+        PaymentMethodEnum payment_method "INTERNAL or EXTERNAL"
+        UUID payment_account_id "Optional: Customer internal account (INTERNAL only)"
+        UUID payment_provider_id "Optional: PSP reference (EXTERNAL only)"
+        STRING external_account_reference "Optional: External account identifier"
+        BOOLEAN is_automatic_payment "Automatic payment flag"
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
 
-    LoanRepaymentRecord {
-        UUID loan_repayment_record_id PK
+    LoanInstallmentRecord {
+        UUID loan_installment_record_id PK
         UUID loan_servicing_case_id FK
-        UUID loan_repayment_schedule_id FK "Optional link to schedule"
+        UUID loan_installment_plan_id FK "Optional link to plan"
         UUID transaction_id FK "Reference to transaction"
         DECIMAL payment_amount "Payment amount"
         DATE payment_date "Date of payment"
         BOOLEAN is_partial_payment "Partial payment flag"
+        PaymentMethodEnum payment_method "INTERNAL or EXTERNAL"
+        PaymentStatusEnum payment_status "PENDING, PROCESSING, COMPLETED, FAILED, REVERSED"
+        UUID payment_provider_id "Optional: PSP reference (EXTERNAL only)"
+        STRING external_transaction_reference "External PSP transaction reference"
         TEXT note "Payment notes"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    LoanInstallmentRecordInternalTransaction {
+        UUID loan_installment_record_internal_transaction_id PK
+        UUID loan_installment_record_id FK
+        UUID source_account_id "Customer internal account"
+        UUID destination_account_id "Loan internal account"
+        DECIMAL transaction_amount
+        STRING transaction_reference
+        TIMESTAMP transaction_date
+        TEXT note
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    LoanInstallmentRecordExternalTransaction {
+        UUID loan_installment_record_external_transaction_id PK
+        UUID loan_installment_record_id FK
+        UUID payment_provider_id "PSP reference"
+        STRING psp_transaction_id "PSP transaction ID"
+        STRING psp_transaction_reference "PSP reference"
+        DECIMAL transaction_amount
+        STRING transaction_currency "ISO currency code"
+        STRING psp_status "PSP status"
+        TEXT psp_status_message
+        STRING payer_account_number "Customer external account"
+        STRING payer_name "Customer name"
+        TIMESTAMP transaction_date
+        TEXT psp_response_payload "Full PSP response"
+        TEXT note
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
@@ -193,6 +236,45 @@ erDiagram
         TIMESTAMP updated_at
     }
 ```
+
+### Decoupled Architecture
+
+The microservice is **completely decoupled from the internal account system**, enabling lending products for any customer:
+
+#### **Key Design Principles**
+
+1. **No Account Dependency**
+   - `LoanServicingCase` references `applicationId` (from loan origination), NOT `accountId`
+   - Customers do NOT need an internal account to receive a loan
+   - Payment collection is configured per installment, not per customer
+
+2. **Flexible Payment Collection**
+   - Each `LoanInstallmentPlan` specifies its own payment method (INTERNAL or EXTERNAL)
+   - Supports mixed payment methods within the same loan (e.g., first payment internal, rest external)
+
+#### **Payment Methods**
+
+1. **INTERNAL Payments** (Customer has internal account)
+   - Payment is debited from customer's internal account
+   - `LoanInstallmentPlan.paymentAccountId` references the customer's internal account
+   - `LoanInstallmentRecordInternalTransaction` tracks the account-to-account movement
+   - Both `sourceAccountId` (customer) and `destinationAccountId` (loan) are internal
+
+2. **EXTERNAL Payments** (Customer has NO internal account)
+   - Payment is collected via external Payment Service Provider (PSP)
+   - `LoanInstallmentPlan.paymentProviderId` references the PSP (e.g., Stripe, PayPal)
+   - `LoanInstallmentPlan.externalAccountReference` stores customer's external account identifier
+   - `LoanInstallmentRecordExternalTransaction` tracks PSP transaction details
+   - Supports direct debit from external bank accounts, credit cards, etc.
+
+#### **Use Cases**
+
+- **Internal Customer**: Customer has a checking account with the bank → Use INTERNAL payment method
+- **External Customer**: Customer banks elsewhere → Use EXTERNAL payment method with PSP
+- **Mixed Portfolio**: Some customers internal, some external → Each installment plan configured independently
+- **Loan Tracking**: All loans trace back to their originating `applicationId` for complete audit trail
+
+This architecture ensures the loan servicing system can provide lending products to **any customer**, regardless of whether they have an internal account relationship.
 
 ## Prerequisites
 
@@ -267,8 +349,8 @@ The microservice provides comprehensive REST APIs documented with OpenAPI 3.0:
 |----------|-----------|-------------|
 | Loan Servicing Cases | `/api/v1/loan-servicing-cases` | Main loan servicing case management |
 | Disbursements | `/api/v1/loan-servicing-cases/{caseId}/disbursements` | Loan disbursement operations |
-| Repayment Schedules | `/api/v1/loan-servicing-cases/{caseId}/repayment-schedules` | Payment schedule management |
-| Repayment Records | `/api/v1/loan-servicing-cases/{caseId}/repayment-records` | Actual payment tracking |
+| Installment Plans | `/api/v1/loan-servicing-cases/{caseId}/installment-plans` | Planned installment schedule management |
+| Installment Records | `/api/v1/loan-servicing-cases/{caseId}/installment-records` | Actual payment tracking (internal/external) |
 | Accruals | `/api/v1/loan-servicing-cases/{caseId}/accruals` | Interest and fee accruals |
 | Rate Changes | `/api/v1/loan-servicing-cases/{caseId}/rate-changes` | Interest rate modifications |
 | Servicing Events | `/api/v1/loan-servicing-cases/{caseId}/events` | Loan servicing event tracking |
