@@ -15,11 +15,11 @@
  */
 
 
-package com.firefly.core.lending.servicing.web.controllers.disbursement.v1;
+package com.firefly.core.lending.servicing.web.controllers;
 
 import com.firefly.common.core.filters.FilterRequest;
 import com.firefly.common.core.queries.PaginationResponse;
-import com.firefly.core.lending.servicing.core.services.disbursement.v1.LoanDisbursementExternalTransactionService;
+import com.firefly.core.lending.servicing.core.services.LoanDisbursementExternalTransactionService;
 import com.firefly.core.lending.servicing.interfaces.dtos.LoanDisbursementExternalTransactionDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
