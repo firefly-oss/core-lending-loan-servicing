@@ -51,6 +51,9 @@ public class LoanServicingCase {
     @Column("application_id")
     private UUID applicationId; // Reference to loan application (from core-lending-loan-origination)
 
+    @Column("product_catalog_id")
+    private UUID productCatalogId; // Reference to product category/template
+
     @Column("servicing_status")
     private ServicingStatusEnum servicingStatus;
 

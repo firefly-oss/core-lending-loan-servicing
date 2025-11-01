@@ -112,6 +112,7 @@ public class ValidationTest {
                 .contractId(UUID.randomUUID())
                 .productId(UUID.randomUUID())
                 .applicationId(UUID.randomUUID())
+                .productCatalogId(UUID.randomUUID())
                 .servicingStatus(ServicingStatusEnum.ACTIVE)
                 .principalOutstanding(new BigDecimal("50000.00"))
                 .interestOutstanding(new BigDecimal("1500.00"))

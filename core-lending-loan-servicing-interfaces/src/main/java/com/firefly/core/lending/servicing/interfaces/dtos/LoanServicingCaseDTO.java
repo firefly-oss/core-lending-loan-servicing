@@ -51,6 +51,10 @@ public class LoanServicingCaseDTO {
     @NotNull(message = "Application ID is required")
     private UUID applicationId; // Reference to loan application (from core-lending-loan-origination)
 
+    @FilterableId
+    @NotNull(message = "Product Catalog ID is required")
+    private UUID productCatalogId; // Reference to product category/template
+
     @NotNull(message = "Servicing status is required")
     private ServicingStatusEnum servicingStatus;
 
