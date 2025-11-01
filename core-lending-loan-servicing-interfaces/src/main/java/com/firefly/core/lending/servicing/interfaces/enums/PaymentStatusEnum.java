@@ -15,7 +15,7 @@
  */
 
 
-package com.firefly.core.lending.servicing.interfaces.enums.repayment.v1;
+package com.firefly.core.lending.servicing.interfaces.enums;
 
 /**
  * Enumeration representing the status of a loan installment payment.

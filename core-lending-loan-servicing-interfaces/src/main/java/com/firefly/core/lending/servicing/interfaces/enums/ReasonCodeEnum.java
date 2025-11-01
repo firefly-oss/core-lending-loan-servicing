@@ -15,7 +15,7 @@
  */
 
 
-package com.firefly.core.lending.servicing.interfaces.enums.rate.v1;
+package com.firefly.core.lending.servicing.interfaces.enums;
 
 public enum ReasonCodeEnum {
     INDEX_ADJUSTMENT,

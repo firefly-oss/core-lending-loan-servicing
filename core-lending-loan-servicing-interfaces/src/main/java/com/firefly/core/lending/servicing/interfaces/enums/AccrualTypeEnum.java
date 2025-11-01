@@ -15,7 +15,7 @@
  */
 
 
-package com.firefly.core.lending.servicing.interfaces.enums.accrual.v1;
+package com.firefly.core.lending.servicing.interfaces.enums;
 
 public enum AccrualTypeEnum {
     INTEREST,

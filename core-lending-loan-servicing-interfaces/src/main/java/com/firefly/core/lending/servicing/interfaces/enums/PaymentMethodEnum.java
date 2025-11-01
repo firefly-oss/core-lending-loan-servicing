@@ -15,7 +15,7 @@
  */
 
 
-package com.firefly.core.lending.servicing.interfaces.enums.repayment.v1;
+package com.firefly.core.lending.servicing.interfaces.enums;
 
 /**
  * Enumeration representing the method used for loan installment payments.

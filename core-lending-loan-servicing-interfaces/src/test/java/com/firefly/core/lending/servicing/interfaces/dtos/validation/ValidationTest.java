@@ -17,17 +17,8 @@
 
 package com.firefly.core.lending.servicing.interfaces.dtos.validation;
 
-import com.firefly.core.lending.servicing.interfaces.dtos.accrual.v1.LoanAccrualDTO;
-import com.firefly.core.lending.servicing.interfaces.dtos.disbursement.v1.LoanDisbursementDTO;
-import com.firefly.core.lending.servicing.interfaces.dtos.rate.v1.LoanRateChangeDTO;
-import com.firefly.core.lending.servicing.interfaces.dtos.repayment.v1.LoanRepaymentRecordDTO;
-import com.firefly.core.lending.servicing.interfaces.dtos.repayment.v1.LoanRepaymentScheduleDTO;
-import com.firefly.core.lending.servicing.interfaces.dtos.servicing.v1.LoanServicingCaseDTO;
-import com.firefly.core.lending.servicing.interfaces.dtos.servicing.v1.LoanServicingEventDTO;
-import com.firefly.core.lending.servicing.interfaces.enums.accrual.v1.AccrualTypeEnum;
-import com.firefly.core.lending.servicing.interfaces.enums.rate.v1.ReasonCodeEnum;
-import com.firefly.core.lending.servicing.interfaces.enums.servicing.v1.EventTypeEnum;
-import com.firefly.core.lending.servicing.interfaces.enums.servicing.v1.ServicingStatusEnum;
+import com.firefly.core.lending.servicing.interfaces.dtos.*;
+import com.firefly.core.lending.servicing.interfaces.enums.*;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -37,11 +28,11 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class to verify validation annotations are working correctly on all DTOs
@@ -92,6 +83,8 @@ public class ValidationTest {
                 .disbursementAmount(new BigDecimal("1000.00"))
                 .disbursementDate(LocalDate.now())
                 .isFinalDisbursement(true)
+                .disbursementMethod(DisbursementMethodEnum.INTERNAL)
+                .disbursementStatus(DisbursementStatusEnum.COMPLETED)
                 .note("Test disbursement")
                 .build();
 
@@ -118,7 +111,7 @@ public class ValidationTest {
         LoanServicingCaseDTO dto = LoanServicingCaseDTO.builder()
                 .contractId(UUID.randomUUID())
                 .productId(UUID.randomUUID())
-                .accountId(UUID.randomUUID())
+                .applicationId(UUID.randomUUID())
                 .servicingStatus(ServicingStatusEnum.ACTIVE)
                 .principalOutstanding(new BigDecimal("50000.00"))
                 .interestOutstanding(new BigDecimal("1500.00"))

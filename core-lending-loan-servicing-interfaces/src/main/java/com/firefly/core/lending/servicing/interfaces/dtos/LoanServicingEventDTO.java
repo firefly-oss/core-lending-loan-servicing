@@ -15,17 +15,20 @@
  */
 
 
-package com.firefly.core.lending.servicing.interfaces.dtos.servicing.v1;
+package com.firefly.core.lending.servicing.interfaces.dtos;
 
-import com.firefly.core.lending.servicing.interfaces.enums.servicing.v1.EventTypeEnum;
-import com.firefly.core.utils.annotations.FilterableId;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.firefly.core.lending.servicing.interfaces.enums.EventTypeEnum;
+import com.firefly.core.utils.annotations.FilterableId;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;

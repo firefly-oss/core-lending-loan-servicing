@@ -15,7 +15,7 @@
  */
 
 
-package com.firefly.core.lending.servicing.interfaces.enums.servicing.v1;
+package com.firefly.core.lending.servicing.interfaces.enums;
 
 public enum ServicingStatusEnum {
     ACTIVE,

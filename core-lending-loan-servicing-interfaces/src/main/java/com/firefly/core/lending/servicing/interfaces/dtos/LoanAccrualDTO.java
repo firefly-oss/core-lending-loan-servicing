@@ -15,17 +15,17 @@
  */
 
 
-package com.firefly.core.lending.servicing.interfaces.dtos.accrual.v1;
+package com.firefly.core.lending.servicing.interfaces.dtos;
 
-import com.firefly.core.lending.servicing.interfaces.enums.accrual.v1.AccrualTypeEnum;
-import com.firefly.core.utils.annotations.FilterableId;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.firefly.core.lending.servicing.interfaces.enums.AccrualTypeEnum;
+import com.firefly.core.utils.annotations.FilterableId;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
