@@ -15,9 +15,9 @@
  */
 
 
-package com.firefly.core.lending.servicing.models.entities.repayment.v1;
+package com.firefly.core.lending.servicing.models.entities;
 
-import com.firefly.core.lending.servicing.interfaces.enums.repayment.v1.PaymentMethodEnum;
+import com.firefly.core.lending.servicing.interfaces.enums.PaymentMethodEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

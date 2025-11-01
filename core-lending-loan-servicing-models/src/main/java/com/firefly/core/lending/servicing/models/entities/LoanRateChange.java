@@ -15,7 +15,7 @@
  */
 
 
-package com.firefly.core.lending.servicing.models.entities.rate.v1;
+package com.firefly.core.lending.servicing.models.entities;
 
 import com.firefly.core.lending.servicing.interfaces.enums.ReasonCodeEnum;
 import lombok.AllArgsConstructor;

@@ -15,10 +15,9 @@
  */
 
 
-package com.firefly.core.lending.servicing.models.repositories.disbursement.v1;
+package com.firefly.core.lending.servicing.models.repositories;
 
-import com.firefly.core.lending.servicing.models.entities.disbursement.v1.LoanDisbursement;
-import com.firefly.core.lending.servicing.models.repositories.BaseRepository;
+import com.firefly.core.lending.servicing.models.entities.LoanDisbursement;
 
 import java.util.UUID;
 

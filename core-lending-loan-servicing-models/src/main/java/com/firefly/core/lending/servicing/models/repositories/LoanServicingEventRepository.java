@@ -15,10 +15,9 @@
  */
 
 
-package com.firefly.core.lending.servicing.models.repositories.servicing.v1;
+package com.firefly.core.lending.servicing.models.repositories;
 
-import com.firefly.core.lending.servicing.models.entities.servicing.v1.LoanServicingEvent;
-import com.firefly.core.lending.servicing.models.repositories.BaseRepository;
+import com.firefly.core.lending.servicing.models.entities.LoanServicingEvent;
 
 import java.util.UUID;
 

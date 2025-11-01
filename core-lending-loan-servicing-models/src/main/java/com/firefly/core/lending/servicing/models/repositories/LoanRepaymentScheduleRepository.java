@@ -15,10 +15,9 @@
  */
 
 
-package com.firefly.core.lending.servicing.models.repositories.repayment.v1;
+package com.firefly.core.lending.servicing.models.repositories;
 
-import com.firefly.core.lending.servicing.models.entities.repayment.v1.LoanRepaymentSchedule;
-import com.firefly.core.lending.servicing.models.repositories.BaseRepository;
+import com.firefly.core.lending.servicing.models.entities.LoanRepaymentSchedule;
 
 import java.util.UUID;
 

@@ -15,10 +15,9 @@
  */
 
 
-package com.firefly.core.lending.servicing.models.repositories.rate.v1;
+package com.firefly.core.lending.servicing.models.repositories;
 
-import com.firefly.core.lending.servicing.models.entities.rate.v1.LoanRateChange;
-import com.firefly.core.lending.servicing.models.repositories.BaseRepository;
+import com.firefly.core.lending.servicing.models.entities.LoanRateChange;
 
 import java.util.UUID;
 

@@ -15,7 +15,7 @@
  */
 
 
-package com.firefly.core.lending.servicing.models.entities.disbursement.v1;
+package com.firefly.core.lending.servicing.models.entities;
 
 import com.firefly.core.lending.servicing.interfaces.enums.DisbursementMethodEnum;
 import com.firefly.core.lending.servicing.interfaces.enums.DisbursementStatusEnum;

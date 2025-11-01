@@ -15,7 +15,7 @@
  */
 
 
-package com.firefly.core.lending.servicing.models.entities.accrual.v1;
+package com.firefly.core.lending.servicing.models.entities;
 
 import com.firefly.core.lending.servicing.interfaces.enums.AccrualTypeEnum;
 import lombok.AllArgsConstructor;

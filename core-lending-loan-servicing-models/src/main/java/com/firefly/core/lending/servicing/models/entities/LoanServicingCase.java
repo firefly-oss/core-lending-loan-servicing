@@ -15,7 +15,7 @@
  */
 
 
-package com.firefly.core.lending.servicing.models.entities.servicing.v1;
+package com.firefly.core.lending.servicing.models.entities;
 
 import com.firefly.core.lending.servicing.interfaces.enums.ServicingStatusEnum;
 import lombok.AllArgsConstructor;
