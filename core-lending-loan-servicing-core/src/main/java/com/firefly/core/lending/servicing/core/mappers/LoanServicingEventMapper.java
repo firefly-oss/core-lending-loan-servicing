@@ -15,10 +15,10 @@
  */
 
 
-package com.firefly.core.lending.servicing.core.mappers.servicing.v1;
+package com.firefly.core.lending.servicing.core.mappers;
 
 import com.firefly.core.lending.servicing.interfaces.dtos.LoanServicingEventDTO;
-import com.firefly.core.lending.servicing.models.entities.servicing.v1.LoanServicingEvent;
+import com.firefly.core.lending.servicing.models.entities.LoanServicingEvent;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

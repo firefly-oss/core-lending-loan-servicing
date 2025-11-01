@@ -15,10 +15,10 @@
  */
 
 
-package com.firefly.core.lending.servicing.core.mappers.repayment.v1;
+package com.firefly.core.lending.servicing.core.mappers;
 
 import com.firefly.core.lending.servicing.interfaces.dtos.LoanInstallmentRecordDTO;
-import com.firefly.core.lending.servicing.models.entities.repayment.v1.LoanInstallmentRecord;
+import com.firefly.core.lending.servicing.models.entities.LoanInstallmentRecord;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

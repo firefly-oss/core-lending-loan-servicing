@@ -15,10 +15,10 @@
  */
 
 
-package com.firefly.core.lending.servicing.core.mappers.accrual.v1;
+package com.firefly.core.lending.servicing.core.mappers;
 
 import com.firefly.core.lending.servicing.interfaces.dtos.LoanAccrualDTO;
-import com.firefly.core.lending.servicing.models.entities.accrual.v1.LoanAccrual;
+import com.firefly.core.lending.servicing.models.entities.LoanAccrual;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
