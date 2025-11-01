@@ -15,24 +15,24 @@
  */
 
 
-package com.firefly.core.lending.servicing.core.services.accrual.v1;
+package com.firefly.core.lending.servicing.core.services.impl;
 
 import com.firefly.common.core.filters.FilterRequest;
 import com.firefly.common.core.filters.FilterUtils;
 import com.firefly.common.core.queries.PaginationResponse;
-import com.firefly.core.lending.servicing.core.mappers.accrual.v1.LoanAccrualMapper;
+import com.firefly.core.lending.servicing.core.mappers.LoanAccrualMapper;
+import com.firefly.core.lending.servicing.core.services.LoanAccrualService;
 import com.firefly.core.lending.servicing.interfaces.dtos.LoanAccrualDTO;
-import com.firefly.core.lending.servicing.models.entities.accrual.v1.LoanAccrual;
-import com.firefly.core.lending.servicing.models.repositories.accrual.v1.LoanAccrualRepository;
+import com.firefly.core.lending.servicing.models.entities.LoanAccrual;
+import com.firefly.core.lending.servicing.models.repositories.LoanAccrualRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
-import java.util.UUID;
-
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 @Transactional

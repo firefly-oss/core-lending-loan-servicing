@@ -15,15 +15,16 @@
  */
 
 
-package com.firefly.core.lending.servicing.core.services.servicing.v1;
+package com.firefly.core.lending.servicing.core.services.impl;
 
 import com.firefly.common.core.filters.FilterRequest;
 import com.firefly.common.core.filters.FilterUtils;
 import com.firefly.common.core.queries.PaginationResponse;
-import com.firefly.core.lending.servicing.core.mappers.servicing.v1.LoanServicingCaseMapper;
+import com.firefly.core.lending.servicing.core.mappers.LoanServicingCaseMapper;
+import com.firefly.core.lending.servicing.core.services.LoanServicingCaseService;
 import com.firefly.core.lending.servicing.interfaces.dtos.LoanServicingCaseDTO;
-import com.firefly.core.lending.servicing.models.entities.servicing.v1.LoanServicingCase;
-import com.firefly.core.lending.servicing.models.repositories.servicing.v1.LoanServicingCaseRepository;
+import com.firefly.core.lending.servicing.models.entities.LoanServicingCase;
+import com.firefly.core.lending.servicing.models.repositories.LoanServicingCaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

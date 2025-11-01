@@ -15,15 +15,16 @@
  */
 
 
-package com.firefly.core.lending.servicing.core.services.rate.v1;
+package com.firefly.core.lending.servicing.core.services.impl;
 
 import com.firefly.common.core.filters.FilterRequest;
 import com.firefly.common.core.filters.FilterUtils;
 import com.firefly.common.core.queries.PaginationResponse;
-import com.firefly.core.lending.servicing.core.mappers.rate.v1.LoanRateChangeMapper;
+import com.firefly.core.lending.servicing.core.mappers.LoanRateChangeMapper;
+import com.firefly.core.lending.servicing.core.services.LoanRateChangeService;
 import com.firefly.core.lending.servicing.interfaces.dtos.LoanRateChangeDTO;
-import com.firefly.core.lending.servicing.models.entities.rate.v1.LoanRateChange;
-import com.firefly.core.lending.servicing.models.repositories.rate.v1.LoanRateChangeRepository;
+import com.firefly.core.lending.servicing.models.entities.LoanRateChange;
+import com.firefly.core.lending.servicing.models.repositories.LoanRateChangeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

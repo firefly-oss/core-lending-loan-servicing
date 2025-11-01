@@ -15,7 +15,7 @@
  */
 
 
-package com.firefly.core.lending.servicing.core.services.rate.v1;
+package com.firefly.core.lending.servicing.core.services;
 
 import com.firefly.common.core.filters.FilterRequest;
 import com.firefly.common.core.queries.PaginationResponse;
