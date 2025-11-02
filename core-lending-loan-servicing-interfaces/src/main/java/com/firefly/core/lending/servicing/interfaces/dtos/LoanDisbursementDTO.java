@@ -69,6 +69,15 @@ public class LoanDisbursementDTO {
     @FilterableId
     private UUID paymentProviderId;
 
+    @FilterableId
+    private UUID distributorId;
+
+    @FilterableId
+    private UUID distributorAgencyId;
+
+    @FilterableId
+    private UUID distributorAgentId;
+
     @Size(max = 255, message = "External transaction reference cannot exceed 255 characters")
     private String externalTransactionReference;
 

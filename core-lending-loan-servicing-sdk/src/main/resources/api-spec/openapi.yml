@@ -2869,9 +2869,15 @@ paths:
           required: false
           schema:
             type: string
-        - name: filters.distributorName
+        - name: filters.distributorAgencyId
           in: query
-          description: Exact filter for distributor name
+          description: Exact filter for distributor agency id
+          required: false
+          schema:
+            type: string
+        - name: filters.distributorAgentId
+          in: query
+          description: Exact filter for distributor agent id
           required: false
           schema:
             type: string
@@ -4628,6 +4634,24 @@ paths:
           required: false
           schema:
             type: string
+        - name: filters.distributorId
+          in: query
+          description: Exact filter for distributor id
+          required: false
+          schema:
+            type: string
+        - name: filters.distributorAgencyId
+          in: query
+          description: Exact filter for distributor agency id
+          required: false
+          schema:
+            type: string
+        - name: filters.distributorAgentId
+          in: query
+          description: Exact filter for distributor agent id
+          required: false
+          schema:
+            type: string
         - name: filters.externalTransactionReference
           in: query
           description: Exact filter for external transaction reference
@@ -6360,10 +6384,12 @@ components:
         distributorId:
           type: string
           format: uuid
-        distributorName:
-          maxLength: 255
-          minLength: 0
+        distributorAgencyId:
           type: string
+          format: uuid
+        distributorAgentId:
+          type: string
+          format: uuid
         distributorCommission:
           minimum: 0
           exclusiveMinimum: false
@@ -6881,6 +6907,15 @@ components:
             - FAILED
             - REVERSED
         paymentProviderId:
+          type: string
+          format: uuid
+        distributorId:
+          type: string
+          format: uuid
+        distributorAgencyId:
+          type: string
+          format: uuid
+        distributorAgentId:
           type: string
           format: uuid
         externalTransactionReference:

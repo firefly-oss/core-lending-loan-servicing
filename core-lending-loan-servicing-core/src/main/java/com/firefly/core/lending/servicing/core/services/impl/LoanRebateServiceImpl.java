@@ -106,7 +106,8 @@ public class LoanRebateServiceImpl implements LoanRebateService {
                     existingEntity.setRebateAmount(dto.getRebateAmount());
                     existingEntity.setRebateDate(dto.getRebateDate());
                     existingEntity.setDistributorId(dto.getDistributorId());
-                    existingEntity.setDistributorName(dto.getDistributorName());
+                    existingEntity.setDistributorAgencyId(dto.getDistributorAgencyId());
+                    existingEntity.setDistributorAgentId(dto.getDistributorAgentId());
                     existingEntity.setDistributorCommission(dto.getDistributorCommission());
                     existingEntity.setIsProcessed(dto.getIsProcessed());
                     existingEntity.setProcessedDate(dto.getProcessedDate());

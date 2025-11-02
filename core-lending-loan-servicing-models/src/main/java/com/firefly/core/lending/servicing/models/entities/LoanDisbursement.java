@@ -67,6 +67,15 @@ public class LoanDisbursement {
     @Column("payment_provider_id")
     private UUID paymentProviderId;
 
+    @Column("distributor_id")
+    private UUID distributorId; // Reference to distributor/broker if applicable
+
+    @Column("distributor_agency_id")
+    private UUID distributorAgencyId; // Reference to distributor agency if applicable
+
+    @Column("distributor_agent_id")
+    private UUID distributorAgentId; // Reference to distributor agent if applicable
+
     @Column("external_transaction_reference")
     private String externalTransactionReference;
 

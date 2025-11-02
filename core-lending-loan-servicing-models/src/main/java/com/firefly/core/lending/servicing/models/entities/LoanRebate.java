@@ -61,8 +61,11 @@ public class LoanRebate {
     @Column("distributor_id")
     private UUID distributorId; // Reference to distributor/broker if applicable
 
-    @Column("distributor_name")
-    private String distributorName;
+    @Column("distributor_agency_id")
+    private UUID distributorAgencyId; // Reference to distributor agency if applicable
+
+    @Column("distributor_agent_id")
+    private UUID distributorAgentId; // Reference to distributor agent if applicable
 
     @Column("distributor_commission")
     private BigDecimal distributorCommission; // Commission paid to distributor

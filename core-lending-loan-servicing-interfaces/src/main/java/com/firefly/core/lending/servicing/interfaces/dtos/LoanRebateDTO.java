@@ -58,8 +58,11 @@ public class LoanRebateDTO {
     @FilterableId
     private UUID distributorId;
 
-    @Size(max = 255, message = "Distributor name cannot exceed 255 characters")
-    private String distributorName;
+    @FilterableId
+    private UUID distributorAgencyId;
+
+    @FilterableId
+    private UUID distributorAgentId;
 
     @DecimalMin(value = "0.0", message = "Distributor commission cannot be negative")
     @Digits(integer = 15, fraction = 2, message = "Distributor commission must have at most 15 integer digits and 2 decimal places")
