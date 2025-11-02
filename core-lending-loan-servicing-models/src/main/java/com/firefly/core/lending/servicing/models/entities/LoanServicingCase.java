@@ -17,7 +17,7 @@
 
 package com.firefly.core.lending.servicing.models.entities;
 
-import com.firefly.core.lending.servicing.interfaces.enums.ServicingStatusEnum;
+import com.firefly.core.lending.servicing.interfaces.enums.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -60,14 +60,30 @@ public class LoanServicingCase {
     @Column("servicing_status")
     private ServicingStatusEnum servicingStatus;
 
-    @Column("principal_outstanding")
-    private BigDecimal principalOutstanding;
+    // Loan configuration fields - common to all loan types
+    @Column("principal_amount")
+    private BigDecimal principalAmount;
 
-    @Column("interest_outstanding")
-    private BigDecimal interestOutstanding;
+    @Column("interest_rate")
+    private BigDecimal interestRate; // Annual interest rate as percentage
 
-    @Column("fees_outstanding")
-    private BigDecimal feesOutstanding;
+    @Column("loan_term")
+    private Integer loanTerm; // Number of payment periods
+
+    @Column("interest_calculation_method")
+    private InterestCalculationMethodEnum interestCalculationMethod;
+
+    @Column("amortization_method")
+    private AmortizationMethodEnum amortizationMethod;
+
+    @Column("payment_frequency")
+    private PaymentFrequencyEnum paymentFrequency;
+
+    @Column("compounding_frequency")
+    private CompoundingFrequencyEnum compoundingFrequency;
+
+    @Column("day_count_convention")
+    private DayCountConventionEnum dayCountConvention;
 
     @Column("origination_date")
     private LocalDate originationDate;

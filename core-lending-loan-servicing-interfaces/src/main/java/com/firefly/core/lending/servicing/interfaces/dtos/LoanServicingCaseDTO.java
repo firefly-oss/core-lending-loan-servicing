@@ -18,7 +18,7 @@
 package com.firefly.core.lending.servicing.interfaces.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.firefly.core.lending.servicing.interfaces.enums.ServicingStatusEnum;
+import com.firefly.core.lending.servicing.interfaces.enums.*;
 import com.firefly.core.utils.annotations.FilterableId;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -61,20 +61,37 @@ public class LoanServicingCaseDTO {
     @NotNull(message = "Servicing status is required")
     private ServicingStatusEnum servicingStatus;
 
-    @NotNull(message = "Principal outstanding is required")
-    @DecimalMin(value = "0.0", message = "Principal outstanding cannot be negative")
-    @Digits(integer = 15, fraction = 2, message = "Principal outstanding must have at most 15 integer digits and 2 decimal places")
-    private BigDecimal principalOutstanding;
+    // Loan configuration fields - common to all loan types
+    @NotNull(message = "Principal amount is required")
+    @DecimalMin(value = "0.01", message = "Principal amount must be greater than zero")
+    @Digits(integer = 15, fraction = 2, message = "Principal amount must have at most 15 integer digits and 2 decimal places")
+    private BigDecimal principalAmount;
 
-    @NotNull(message = "Interest outstanding is required")
-    @DecimalMin(value = "0.0", message = "Interest outstanding cannot be negative")
-    @Digits(integer = 15, fraction = 2, message = "Interest outstanding must have at most 15 integer digits and 2 decimal places")
-    private BigDecimal interestOutstanding;
+    @NotNull(message = "Interest rate is required")
+    @DecimalMin(value = "0.0", message = "Interest rate cannot be negative")
+    @DecimalMax(value = "100.0", message = "Interest rate cannot exceed 100%")
+    @Digits(integer = 3, fraction = 4, message = "Interest rate must have at most 3 integer digits and 4 decimal places")
+    private BigDecimal interestRate; // Annual interest rate as percentage (e.g., 5.25 for 5.25%)
 
-    @NotNull(message = "Fees outstanding is required")
-    @DecimalMin(value = "0.0", message = "Fees outstanding cannot be negative")
-    @Digits(integer = 15, fraction = 2, message = "Fees outstanding must have at most 15 integer digits and 2 decimal places")
-    private BigDecimal feesOutstanding;
+    @NotNull(message = "Loan term is required")
+    @Min(value = 1, message = "Loan term must be at least 1")
+    @Max(value = 600, message = "Loan term cannot exceed 600 periods")
+    private Integer loanTerm; // Number of payment periods
+
+    @NotNull(message = "Interest calculation method is required")
+    private InterestCalculationMethodEnum interestCalculationMethod;
+
+    @NotNull(message = "Amortization method is required")
+    private AmortizationMethodEnum amortizationMethod;
+
+    @NotNull(message = "Payment frequency is required")
+    private PaymentFrequencyEnum paymentFrequency;
+
+    @NotNull(message = "Compounding frequency is required")
+    private CompoundingFrequencyEnum compoundingFrequency;
+
+    @NotNull(message = "Day count convention is required")
+    private DayCountConventionEnum dayCountConvention;
 
     @NotNull(message = "Origination date is required")
     @PastOrPresent(message = "Origination date cannot be in the future")

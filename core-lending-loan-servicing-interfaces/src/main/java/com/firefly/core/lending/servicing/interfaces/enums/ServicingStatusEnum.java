@@ -17,10 +17,78 @@
 
 package com.firefly.core.lending.servicing.interfaces.enums;
 
+/**
+ * Enumeration of loan servicing statuses.
+ * Represents the current state of a loan throughout its lifecycle.
+ */
 public enum ServicingStatusEnum {
+    /**
+     * Loan is pending activation (disbursement not yet completed)
+     */
+    PENDING,
+
+    /**
+     * Loan is active and in good standing
+     */
     ACTIVE,
-    PAID_OFF,
-    CLOSED,
+
+    /**
+     * Loan is in grace period (payment overdue but within grace period)
+     */
+    GRACE_PERIOD,
+
+    /**
+     * Loan is delinquent (payment overdue beyond grace period)
+     */
+    DELINQUENT,
+
+    /**
+     * Loan is in default
+     */
     DEFAULT,
-    RESTRUCTURED
+
+    /**
+     * Loan is in forbearance (temporary payment suspension)
+     */
+    FORBEARANCE,
+
+    /**
+     * Loan has been restructured
+     */
+    RESTRUCTURED,
+
+    /**
+     * Loan is in bankruptcy proceedings
+     */
+    BANKRUPTCY,
+
+    /**
+     * Loan is in foreclosure process
+     */
+    FORECLOSURE,
+
+    /**
+     * Loan has been charged off
+     */
+    CHARGED_OFF,
+
+    /**
+     * Loan has been paid off in full
+     */
+    PAID_OFF,
+
+    /**
+     * Loan has been closed
+     */
+    CLOSED,
+
+    /**
+     * Loan has been sold/transferred to another servicer
+     */
+    TRANSFERRED,
+
+    /**
+     * Loan has been cancelled
+     */
+    CANCELLED
 }
