@@ -949,6 +949,12 @@ paths:
           required: false
           schema:
             type: string
+        - name: filters.proposedOfferId
+          in: query
+          description: Exact filter for proposed offer id
+          required: false
+          schema:
+            type: string
         - name: filters.productCatalogId
           in: query
           description: Exact filter for product catalog id
@@ -3483,6 +3489,9 @@ components:
           type: string
           format: uuid
         applicationId:
+          type: string
+          format: uuid
+        proposedOfferId:
           type: string
           format: uuid
         productCatalogId:

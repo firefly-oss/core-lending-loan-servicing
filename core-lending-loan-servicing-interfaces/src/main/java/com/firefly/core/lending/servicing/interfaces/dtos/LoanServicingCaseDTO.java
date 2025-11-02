@@ -52,6 +52,9 @@ public class LoanServicingCaseDTO {
     private UUID applicationId; // Reference to loan application (from core-lending-loan-origination)
 
     @FilterableId
+    private UUID proposedOfferId; // Reference to the accepted proposed offer (from core-lending-loan-origination)
+
+    @FilterableId
     @NotNull(message = "Product Catalog ID is required")
     private UUID productCatalogId; // Reference to product category/template
 
