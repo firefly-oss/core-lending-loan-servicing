@@ -50,11 +50,14 @@ CREATE TABLE loan_disbursement (
     disbursement_method             disbursement_method NOT NULL,
     disbursement_status             disbursement_status NOT NULL,
     payment_provider_id             UUID,
+    distributor_id                  UUID,
+    distributor_agency_id           UUID,
+    distributor_agent_id            UUID,
     external_transaction_reference  VARCHAR(255),
     note                            TEXT,
     created_at                      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at                      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_disbursement_case FOREIGN KEY (loan_servicing_case_id) 
+    CONSTRAINT fk_disbursement_case FOREIGN KEY (loan_servicing_case_id)
         REFERENCES loan_servicing_case (loan_servicing_case_id)
 );
 
@@ -227,6 +230,51 @@ CREATE TABLE loan_installment_record_external_transaction (
 );
 
 -- ========================================================================
+-- LOAN REPAYMENT SCHEDULE TABLE
+-- ========================================================================
+-- Tracks planned repayment schedule for a loan
+-- Entity: LoanRepaymentSchedule
+CREATE TABLE loan_repayment_schedule (
+    loan_repayment_schedule_id      UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    loan_servicing_case_id          UUID NOT NULL,
+    installment_number              INTEGER NOT NULL,
+    due_date                        DATE NOT NULL,
+    principal_due                   DECIMAL(18,2) NOT NULL,
+    interest_due                    DECIMAL(18,2) NOT NULL,
+    fee_due                         DECIMAL(18,2) NOT NULL,
+    total_due                       DECIMAL(18,2) NOT NULL,
+    is_paid                         BOOLEAN NOT NULL DEFAULT FALSE,
+    paid_date                       DATE,
+    paid_amount                     DECIMAL(18,2),
+    created_at                      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at                      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_repayment_schedule_case FOREIGN KEY (loan_servicing_case_id)
+        REFERENCES loan_servicing_case (loan_servicing_case_id)
+);
+
+-- ========================================================================
+-- LOAN REPAYMENT RECORD TABLE
+-- ========================================================================
+-- Tracks actual repayment transactions for a loan
+-- Entity: LoanRepaymentRecord
+CREATE TABLE loan_repayment_record (
+    loan_repayment_record_id        UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    loan_servicing_case_id          UUID NOT NULL,
+    loan_repayment_schedule_id      UUID,
+    transaction_id                  UUID NOT NULL,
+    payment_amount                  DECIMAL(18,2) NOT NULL,
+    payment_date                    DATE NOT NULL,
+    is_partial_payment              BOOLEAN NOT NULL DEFAULT FALSE,
+    note                            TEXT,
+    created_at                      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at                      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_repayment_record_case FOREIGN KEY (loan_servicing_case_id)
+        REFERENCES loan_servicing_case (loan_servicing_case_id),
+    CONSTRAINT fk_repayment_record_schedule FOREIGN KEY (loan_repayment_schedule_id)
+        REFERENCES loan_repayment_schedule (loan_repayment_schedule_id)
+);
+
+-- ========================================================================
 -- LOAN BALANCE TABLE
 -- ========================================================================
 -- Tracks balance snapshots for a loan
@@ -350,7 +398,8 @@ CREATE TABLE loan_rebate (
     rebate_amount                   DECIMAL(18,2) NOT NULL,
     rebate_date                     DATE NOT NULL,
     distributor_id                  UUID,
-    distributor_name                VARCHAR(255),
+    distributor_agency_id           UUID,
+    distributor_agent_id            UUID,
     distributor_commission          DECIMAL(18,2),
     is_processed                    BOOLEAN NOT NULL DEFAULT FALSE,
     processed_date                  DATE,
