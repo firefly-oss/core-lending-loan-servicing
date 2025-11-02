@@ -66,6 +66,8 @@ erDiagram
     LoanServicingCase ||--o{ LoanDisbursementPlan : "has many"
     LoanServicingCase ||--o{ LoanInstallmentPlan : "has many"
     LoanServicingCase ||--o{ LoanInstallmentRecord : "has many"
+    LoanServicingCase ||--o{ LoanRepaymentSchedule : "has many"
+    LoanServicingCase ||--o{ LoanRepaymentRecord : "has many"
     LoanServicingCase ||--o{ LoanBalance : "has many"
     LoanServicingCase ||--o{ LoanAccrual : "has many"
     LoanServicingCase ||--o{ LoanRateChange : "has many"
@@ -75,6 +77,7 @@ erDiagram
     LoanServicingCase ||--o{ LoanNotification : "has many"
     LoanServicingCase ||--o{ LoanServicingEvent : "has many"
     LoanInstallmentPlan ||--o{ LoanInstallmentRecord : "linked to"
+    LoanRepaymentSchedule ||--o{ LoanRepaymentRecord : "linked to"
     LoanDisbursement ||--o{ LoanDisbursementInternalTransaction : "has many"
     LoanDisbursement ||--o{ LoanDisbursementExternalTransaction : "has many"
     LoanInstallmentRecord ||--o{ LoanInstallmentRecordInternalTransaction : "has many"
@@ -85,15 +88,17 @@ erDiagram
         UUID contract_id FK "Reference to loan contract"
         UUID product_id FK "Reference to loan product"
         UUID application_id FK "Reference to loan application (origination)"
+        UUID proposed_offer_id FK "Reference to accepted proposed offer (origination)"
+        UUID product_catalog_id FK "Reference to product category/template"
         ServicingStatusEnum servicing_status "Status: PENDING, ACTIVE, GRACE_PERIOD, DELINQUENT, DEFAULT, etc."
-        InterestCalculationMethodEnum interest_calculation_method "SIMPLE, COMPOUND, ACTUARIAL, REDUCING_BALANCE, FLAT_RATE"
-        AmortizationMethodEnum amortization_method "EQUAL_INSTALLMENT, EQUAL_PRINCIPAL, BALLOON_PAYMENT, etc."
-        PaymentFrequencyEnum payment_frequency "DAILY, WEEKLY, MONTHLY, QUARTERLY, etc."
-        CompoundingFrequencyEnum compounding_frequency "DAILY, MONTHLY, QUARTERLY, ANNUALLY, CONTINUOUS"
-        DayCountConventionEnum day_count_convention "ACTUAL_360, ACTUAL_365, ACTUAL_ACTUAL, THIRTY_360"
-        DECIMAL interest_rate "Annual interest rate percentage"
-        INTEGER loan_term "Loan term in months"
         DECIMAL principal_amount "Original principal amount"
+        DECIMAL interest_rate "Annual interest rate percentage"
+        INTEGER loan_term "Loan term in payment periods"
+        InterestCalculationMethodEnum interest_calculation_method "SIMPLE, COMPOUND, ACTUARIAL, REDUCING_BALANCE, FLAT_RATE"
+        AmortizationMethodEnum amortization_method "EQUAL_INSTALLMENT, EQUAL_PRINCIPAL, BALLOON_PAYMENT, INTEREST_ONLY, BULLET"
+        PaymentFrequencyEnum payment_frequency "DAILY, WEEKLY, BIWEEKLY, SEMIMONTHLY, MONTHLY, BIMONTHLY, QUARTERLY, SEMIANNUALLY, ANNUALLY"
+        CompoundingFrequencyEnum compounding_frequency "DAILY, MONTHLY, QUARTERLY, SEMIANNUALLY, ANNUALLY, CONTINUOUS"
+        DayCountConventionEnum day_count_convention "ACTUAL_360, ACTUAL_365, ACTUAL_ACTUAL, THIRTY_360"
         DATE origination_date "Loan origination date"
         DATE maturity_date "Loan maturity date"
         TEXT remarks "Additional notes"
@@ -111,6 +116,9 @@ erDiagram
         DisbursementMethodEnum disbursement_method "INTERNAL, EXTERNAL"
         DisbursementStatusEnum disbursement_status "PENDING, PROCESSING, COMPLETED, FAILED, REVERSED"
         UUID payment_provider_id "Reference to PSP master data"
+        UUID distributor_id "Reference to distributor (from distributor microservice)"
+        UUID distributor_agency_id "Reference to distributor agency"
+        UUID distributor_agent_id "Reference to distributor agent"
         VARCHAR external_transaction_reference "PSP transaction reference"
         TEXT note "Disbursement notes"
         TIMESTAMP created_at
@@ -170,15 +178,44 @@ erDiagram
         TIMESTAMP updated_at
     }
 
+    LoanRepaymentSchedule {
+        UUID loan_repayment_schedule_id PK
+        UUID loan_servicing_case_id FK
+        INTEGER installment_number "Installment sequence number"
+        DATE due_date "Payment due date"
+        DECIMAL principal_due "Principal amount due"
+        DECIMAL interest_due "Interest amount due"
+        DECIMAL fee_due "Fee amount due"
+        DECIMAL total_due "Total amount due"
+        BOOLEAN is_paid "Payment status"
+        DATE paid_date "Date payment was made"
+        DECIMAL paid_amount "Amount actually paid"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    LoanRepaymentRecord {
+        UUID loan_repayment_record_id PK
+        UUID loan_servicing_case_id FK
+        UUID loan_repayment_schedule_id FK "Optional link to schedule"
+        UUID transaction_id FK "Reference to transaction"
+        DECIMAL payment_amount "Payment amount"
+        DATE payment_date "Date of payment"
+        BOOLEAN is_partial_payment "Partial payment flag"
+        TEXT note "Payment notes"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
     LoanBalance {
         UUID loan_balance_id PK
         UUID loan_servicing_case_id FK
         DECIMAL principal_outstanding "Outstanding principal amount"
         DECIMAL interest_outstanding "Outstanding interest amount"
         DECIMAL fees_outstanding "Outstanding fees amount"
-        DECIMAL total_outstanding "Total outstanding balance"
+        DECIMAL total_outstanding "Total outstanding balance (computed)"
         DATE balance_date "Date of balance snapshot"
-        TEXT remarks "Additional notes"
+        BOOLEAN is_current "True for most recent balance, false for historical"
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
@@ -242,15 +279,26 @@ erDiagram
         UUID loan_restructuring_id PK
         UUID loan_servicing_case_id FK
         DATE restructuring_date "Date of restructuring"
-        DECIMAL old_principal_amount "Original principal amount"
-        DECIMAL new_principal_amount "New principal amount"
-        DECIMAL old_interest_rate "Original interest rate"
-        DECIMAL new_interest_rate "New interest rate"
-        INTEGER old_loan_term "Original loan term in months"
-        INTEGER new_loan_term "New loan term in months"
-        DATE old_maturity_date "Original maturity date"
-        DATE new_maturity_date "New maturity date"
         VARCHAR reason "Reason for restructuring"
+        DECIMAL old_principal_amount "Original principal amount"
+        DECIMAL old_interest_rate "Original interest rate"
+        INTEGER old_loan_term "Original loan term"
+        InterestCalculationMethodEnum old_interest_calculation_method
+        AmortizationMethodEnum old_amortization_method
+        PaymentFrequencyEnum old_payment_frequency
+        CompoundingFrequencyEnum old_compounding_frequency
+        DayCountConventionEnum old_day_count_convention
+        DATE old_maturity_date "Original maturity date"
+        DECIMAL new_principal_amount "New principal amount"
+        DECIMAL new_interest_rate "New interest rate"
+        INTEGER new_loan_term "New loan term"
+        InterestCalculationMethodEnum new_interest_calculation_method
+        AmortizationMethodEnum new_amortization_method
+        PaymentFrequencyEnum new_payment_frequency
+        CompoundingFrequencyEnum new_compounding_frequency
+        DayCountConventionEnum new_day_count_convention
+        DATE new_maturity_date "New maturity date"
+        UUID approved_by "User who approved restructuring"
         TEXT remarks "Additional notes"
         TIMESTAMP created_at
         TIMESTAMP updated_at
@@ -260,13 +308,16 @@ erDiagram
         UUID loan_escrow_id PK
         UUID loan_servicing_case_id FK
         EscrowTypeEnum escrow_type "INSURANCE, TAX, MAINTENANCE_RESERVE, FREIGHT_SHIPPING, etc."
-        DECIMAL escrow_amount "Escrow amount"
-        DECIMAL escrow_balance "Current escrow balance"
-        DATE payment_due_date "Payment due date"
-        DATE payment_date "Actual payment date"
-        BOOLEAN is_paid "Payment status"
-        VARCHAR payee_name "Payee name (e.g., Insurance Co, Tax Authority, Freight Forwarder)"
-        VARCHAR payee_account "Payee account number"
+        DECIMAL monthly_payment_amount "Monthly escrow payment amount"
+        DECIMAL current_balance "Current escrow account balance"
+        DECIMAL target_balance "Target/required escrow balance"
+        DECIMAL annual_disbursement_amount "Expected annual disbursement"
+        DATE next_disbursement_date "When next payment is due"
+        DATE last_analysis_date "Last escrow analysis date"
+        DATE next_analysis_date "Next scheduled escrow analysis"
+        BOOLEAN is_active "Escrow account active status"
+        VARCHAR payee_name "Payee name (e.g., Insurance Co, Tax Authority)"
+        VARCHAR payee_account_number "Payee account number"
         TEXT remarks "Additional notes"
         TIMESTAMP created_at
         TIMESTAMP updated_at
@@ -275,15 +326,16 @@ erDiagram
     LoanRebate {
         UUID loan_rebate_id PK
         UUID loan_servicing_case_id FK
-        RebateTypeEnum rebate_type "BORROWER_REBATE, DISTRIBUTOR_REBATE, PROMOTIONAL_REBATE, etc."
+        RebateTypeEnum rebate_type "BORROWER_REBATE, DISTRIBUTOR_COMMISSION, PROMOTIONAL_REBATE, etc."
         DECIMAL rebate_amount "Rebate amount"
         DATE rebate_date "Date rebate was issued"
-        UUID distributor_id "Optional: Distributor/broker ID"
-        VARCHAR distributor_name "Optional: Distributor/broker name"
-        DECIMAL distributor_commission_percentage "Optional: Commission percentage"
-        DECIMAL distributor_commission_amount "Optional: Commission amount"
-        BOOLEAN is_paid "Payment status"
-        DATE payment_date "Actual payment date"
+        UUID distributor_id "Optional: Distributor ID (from distributor microservice)"
+        UUID distributor_agency_id "Optional: Distributor agency ID"
+        UUID distributor_agent_id "Optional: Distributor agent ID"
+        DECIMAL distributor_commission "Optional: Commission paid to distributor"
+        BOOLEAN is_processed "Processing status"
+        DATE processed_date "Date rebate was processed"
+        VARCHAR description "Rebate description"
         TEXT remarks "Additional notes"
         TIMESTAMP created_at
         TIMESTAMP updated_at
@@ -292,19 +344,22 @@ erDiagram
     LoanNotification {
         UUID loan_notification_id PK
         UUID loan_servicing_case_id FK
-        NotificationTypeEnum notification_type "PAYMENT_DUE, PAYMENT_RECEIVED, DISBURSEMENT_COMPLETED, etc."
+        NotificationTypeEnum notification_type "PAYMENT_DUE_REMINDER, PAYMENT_RECEIVED, DISBURSEMENT_COMPLETED, etc."
         NotificationChannelEnum notification_channel "EMAIL, SMS, PUSH, IN_APP, MAIL, PHONE"
+        NotificationStatusEnum notification_status "PENDING, SENT, DELIVERED, FAILED, READ"
         UUID recipient_party_id "Recipient party ID from application/contract"
         VARCHAR recipient_name "Recipient name"
         VARCHAR recipient_contact "Recipient contact (email, phone, etc.)"
-        TEXT notification_content "Notification message content"
-        TIMESTAMP scheduled_at "Scheduled send time"
-        TIMESTAMP sent_at "Actual send time"
-        BOOLEAN is_sent "Send status"
-        BOOLEAN is_read "Read status (for in-app notifications)"
-        TIMESTAMP read_at "Read timestamp"
-        TEXT error_message "Error message if send failed"
-        TEXT remarks "Additional notes"
+        VARCHAR subject "Notification subject"
+        TEXT message_body "Notification message content"
+        TIMESTAMP scheduled_send_time "Scheduled send time"
+        TIMESTAMP sent_time "Actual send time"
+        TIMESTAMP delivered_time "Delivery timestamp"
+        TIMESTAMP read_time "Read timestamp (for in-app notifications)"
+        TEXT failure_reason "Reason if delivery failed"
+        INTEGER retry_count "Number of retry attempts"
+        VARCHAR template_id "Notification template ID"
+        TEXT metadata "Additional metadata (JSON)"
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
@@ -433,6 +488,9 @@ Tracks actual loan disbursements with internal/external transaction support.
 - `disbursementMethod`: INTERNAL or EXTERNAL
 - `disbursementStatus`: PENDING, PROCESSING, COMPLETED, FAILED, REVERSED
 - `paymentProviderId`: PSP reference (for external disbursements)
+- `distributorId`: Distributor ID (from distributor microservice)
+- `distributorAgencyId`: Distributor agency ID
+- `distributorAgentId`: Distributor agent ID
 - `externalTransactionReference`: PSP transaction reference
 
 **Relationships:**
@@ -508,6 +566,59 @@ Tracks actual payments made against installments.
 - Many-to-one with LoanInstallmentPlan (optional)
 - One-to-many with LoanInstallmentRecordInternalTransaction, LoanInstallmentRecordExternalTransaction
 
+#### LoanRepaymentSchedule
+
+Tracks the planned repayment schedule for a loan with amortization details.
+
+**Key Fields:**
+- `loanRepaymentScheduleId`: Unique identifier (UUID)
+- `loanServicingCaseId`: Parent loan servicing case
+- `installmentNumber`: Installment sequence number
+- `dueDate`: Payment due date
+- `principalDue`: Principal amount due
+- `interestDue`: Interest amount due
+- `feeDue`: Fee amount due
+- `totalDue`: Total amount due
+- `isPaid`: Payment status flag
+- `paidDate`: Date payment was made
+- `paidAmount`: Amount actually paid
+
+**Use Cases:**
+- Amortization schedule generation
+- Payment due tracking
+- Principal/interest breakdown
+- Payment history tracking
+- Schedule vs actual comparison
+
+**Relationships:**
+- Many-to-one with LoanServicingCase
+- One-to-many with LoanRepaymentRecord
+
+#### LoanRepaymentRecord
+
+Tracks actual repayment transactions against the repayment schedule.
+
+**Key Fields:**
+- `loanRepaymentRecordId`: Unique identifier (UUID)
+- `loanServicingCaseId`: Parent loan servicing case
+- `loanRepaymentScheduleId`: Optional link to repayment schedule
+- `transactionId`: Reference to transaction
+- `paymentAmount`: Payment amount
+- `paymentDate`: Date of payment
+- `isPartialPayment`: Partial payment flag
+- `note`: Payment notes
+
+**Use Cases:**
+- Repayment transaction tracking
+- Payment history
+- Schedule vs actual reconciliation
+- Partial payment tracking
+- Payment audit trail
+
+**Relationships:**
+- Many-to-one with LoanServicingCase
+- Many-to-one with LoanRepaymentSchedule (optional)
+
 #### LoanBalance
 
 Tracks historical balance snapshots for audit and reporting.
@@ -518,14 +629,16 @@ Tracks historical balance snapshots for audit and reporting.
 - `principalOutstanding`: Outstanding principal amount
 - `interestOutstanding`: Outstanding interest amount
 - `feesOutstanding`: Outstanding fees amount
-- `totalOutstanding`: Total outstanding balance
+- `totalOutstanding`: Total outstanding balance (computed)
 - `balanceDate`: Date of balance snapshot
+- `isCurrent`: True for most recent balance, false for historical
 
 **Use Cases:**
 - Historical balance tracking
 - Month-end balance snapshots
 - Audit trail for balance changes
 - Reporting and analytics
+- Point-in-time balance queries
 
 #### LoanAccrual
 
@@ -558,27 +671,41 @@ Tracks interest rate changes with full audit trail.
 
 #### LoanRestructuring
 
-Tracks loan restructuring events with old/new terms comparison.
+Tracks loan restructuring events with complete old/new terms comparison.
 
 **Key Fields:**
 - `loanRestructuringId`: Unique identifier (UUID)
 - `loanServicingCaseId`: Parent loan servicing case
 - `restructuringDate`: Date of restructuring
-- `oldPrincipalAmount`: Original principal amount
-- `newPrincipalAmount`: New principal amount
-- `oldInterestRate`: Original interest rate
-- `newInterestRate`: New interest rate
-- `oldLoanTerm`: Original loan term in months
-- `newLoanTerm`: New loan term in months
-- `oldMaturityDate`: Original maturity date
-- `newMaturityDate`: New maturity date
 - `reason`: Reason for restructuring
+- **Old Terms:**
+  - `oldPrincipalAmount`: Original principal amount
+  - `oldInterestRate`: Original interest rate
+  - `oldLoanTerm`: Original loan term
+  - `oldInterestCalculationMethod`: Original interest calculation method
+  - `oldAmortizationMethod`: Original amortization method
+  - `oldPaymentFrequency`: Original payment frequency
+  - `oldCompoundingFrequency`: Original compounding frequency
+  - `oldDayCountConvention`: Original day count convention
+  - `oldMaturityDate`: Original maturity date
+- **New Terms:**
+  - `newPrincipalAmount`: New principal amount
+  - `newInterestRate`: New interest rate
+  - `newLoanTerm`: New loan term
+  - `newInterestCalculationMethod`: New interest calculation method
+  - `newAmortizationMethod`: New amortization method
+  - `newPaymentFrequency`: New payment frequency
+  - `newCompoundingFrequency`: New compounding frequency
+  - `newDayCountConvention`: New day count convention
+  - `newMaturityDate`: New maturity date
+- `approvedBy`: User ID who approved the restructuring
 
 **Use Cases:**
 - Loan modifications
 - Forbearance agreements
 - Workout arrangements
 - Refinancing
+- Complete audit trail of term changes
 
 #### LoanEscrow
 
@@ -588,13 +715,16 @@ Manages escrow accounts for all types of lending products including mortgages, a
 - `loanEscrowId`: Unique identifier (UUID)
 - `loanServicingCaseId`: Parent loan servicing case
 - `escrowType`: INSURANCE, TAX, MAINTENANCE_RESERVE, FREIGHT_SHIPPING, DEBT_SERVICE_RESERVE, etc.
-- `escrowAmount`: Escrow amount
-- `escrowBalance`: Current escrow balance
-- `paymentDueDate`: Payment due date
-- `paymentDate`: Actual payment date
-- `isPaid`: Payment status
+- `monthlyPaymentAmount`: Monthly escrow payment amount
+- `currentBalance`: Current escrow account balance
+- `targetBalance`: Target/required escrow balance
+- `annualDisbursementAmount`: Expected annual disbursement (e.g., annual tax bill)
+- `nextDisbursementDate`: When next payment is due (e.g., tax due date)
+- `lastAnalysisDate`: Last escrow analysis date
+- `nextAnalysisDate`: Next scheduled escrow analysis
+- `isActive`: Escrow account active status
 - `payeeName`: Payee name (e.g., "Insurance Company", "Tax Authority", "Freight Forwarder")
-- `payeeAccount`: Payee account number
+- `payeeAccountNumber`: Payee account number
 
 **Use Cases:**
 - **Mortgages**: Property tax, homeowners insurance, mortgage insurance, HOA fees
@@ -612,15 +742,16 @@ Tracks rebates, commissions, and incentives.
 **Key Fields:**
 - `loanRebateId`: Unique identifier (UUID)
 - `loanServicingCaseId`: Parent loan servicing case
-- `rebateType`: BORROWER_REBATE, DISTRIBUTOR_REBATE, PROMOTIONAL_REBATE, etc.
+- `rebateType`: BORROWER_REBATE, DISTRIBUTOR_COMMISSION, PROMOTIONAL_REBATE, etc.
 - `rebateAmount`: Rebate amount
 - `rebateDate`: Date rebate was issued
-- `distributorId`: Distributor/broker ID (optional)
-- `distributorName`: Distributor/broker name (optional)
-- `distributorCommissionPercentage`: Commission percentage (optional)
-- `distributorCommissionAmount`: Commission amount (optional)
-- `isPaid`: Payment status
-- `paymentDate`: Actual payment date
+- `distributorId`: Distributor ID (from distributor microservice) - optional
+- `distributorAgencyId`: Distributor agency ID - optional
+- `distributorAgentId`: Distributor agent ID - optional
+- `distributorCommission`: Commission paid to distributor (optional)
+- `isProcessed`: Processing status
+- `processedDate`: Date rebate was processed
+- `description`: Rebate description
 
 **Use Cases:**
 - Direct borrower rebates
@@ -631,6 +762,8 @@ Tracks rebates, commissions, and incentives.
 - Referral rebates
 - Government subsidies
 - Rate buydowns
+- Closing cost rebates
+- Volume rebates
 
 #### LoanNotification
 
@@ -639,18 +772,22 @@ Tracks notifications sent to loan parties via multiple channels.
 **Key Fields:**
 - `loanNotificationId`: Unique identifier (UUID)
 - `loanServicingCaseId`: Parent loan servicing case
-- `notificationType`: PAYMENT_DUE, PAYMENT_RECEIVED, DISBURSEMENT_COMPLETED, etc.
+- `notificationType`: PAYMENT_DUE_REMINDER, PAYMENT_RECEIVED, DISBURSEMENT_COMPLETED, etc.
 - `notificationChannel`: EMAIL, SMS, PUSH, IN_APP, MAIL, PHONE
+- `notificationStatus`: PENDING, SENT, DELIVERED, FAILED, READ
 - `recipientPartyId`: Recipient party ID from application/contract
 - `recipientName`: Recipient name
 - `recipientContact`: Recipient contact (email, phone, etc.)
-- `notificationContent`: Notification message content
-- `scheduledAt`: Scheduled send time
-- `sentAt`: Actual send time
-- `isSent`: Send status
-- `isRead`: Read status (for in-app notifications)
-- `readAt`: Read timestamp
-- `errorMessage`: Error message if send failed
+- `subject`: Notification subject
+- `messageBody`: Notification message content
+- `scheduledSendTime`: Scheduled send time
+- `sentTime`: Actual send time
+- `deliveredTime`: Delivery timestamp
+- `readTime`: Read timestamp (for in-app notifications)
+- `failureReason`: Reason if delivery failed
+- `retryCount`: Number of retry attempts
+- `templateId`: Notification template ID
+- `metadata`: Additional metadata (JSON)
 
 **Use Cases:**
 - Payment reminders
@@ -661,6 +798,8 @@ Tracks notifications sent to loan parties via multiple channels.
 - Monthly statements
 - Escrow analysis
 - Rebate notifications
+- Account status changes
+- Document requests
 
 #### LoanServicingEvent
 
@@ -769,64 +908,55 @@ Tracks the complete lifecycle of a loan servicing case:
 
 Defines how interest is calculated:
 
-- **SIMPLE**: Simple interest calculation (I = P × r × t)
-- **COMPOUND**: Compound interest calculation
-- **ACTUARIAL**: Actuarial method for precise calculations
-- **REDUCING_BALANCE**: Interest on reducing principal balance
-- **FLAT_RATE**: Flat rate on original principal
-- **RULE_OF_78**: Sum-of-digits method
-- **ADD_ON**: Add-on interest method
+- **SIMPLE**: Simple interest calculated on the original principal only (I = P × r × t)
+- **COMPOUND**: Compound interest where interest is added to principal periodically
+- **ACTUARIAL**: Actuarial method - interest calculated on outstanding balance between payment dates (most common for installment loans)
+- **REDUCING_BALANCE**: Interest calculated on the reducing principal balance after each payment
+- **FLAT_RATE**: Flat rate interest calculated on original principal for entire term
 
 ### Amortization Method Enum
 
 Defines how the loan is amortized:
 
-- **EQUAL_INSTALLMENT**: Equal periodic payments (most common)
-- **EQUAL_PRINCIPAL**: Equal principal with decreasing interest
-- **BALLOON_PAYMENT**: Small payments with large final payment
-- **BULLET_PAYMENT**: Interest-only with principal at maturity
-- **GRADUATED_PAYMENT**: Payments increase over time
-- **NEGATIVE_AMORTIZATION**: Payments less than interest (balance grows)
-- **INTEREST_ONLY**: Interest-only payments
-- **CUSTOM**: Custom amortization schedule
+- **EQUAL_INSTALLMENT**: Equal total payment each period (principal + interest) - most common for consumer loans and mortgages
+- **EQUAL_PRINCIPAL**: Equal principal payment each period (total payment decreases over time)
+- **BALLOON_PAYMENT**: Regular smaller payments with a large final balloon payment
+- **INTEREST_ONLY**: Only interest paid during term, full principal due at maturity
+- **BULLET**: Single payment of both principal and interest at maturity (no periodic payments)
 
 ### Payment Frequency Enum
 
 Defines payment schedule frequency:
 
-- **DAILY**: Daily payments
-- **WEEKLY**: Weekly payments
-- **BIWEEKLY**: Every two weeks
-- **SEMI_MONTHLY**: Twice per month (e.g., 1st and 15th)
-- **MONTHLY**: Monthly payments (most common)
-- **QUARTERLY**: Every three months
-- **SEMI_ANNUALLY**: Twice per year
-- **ANNUALLY**: Once per year
-- **BULLET**: Single payment at maturity
-- **CUSTOM**: Custom payment schedule
+- **DAILY**: Payment due every day (rare, typically for very short-term loans)
+- **WEEKLY**: Payment due every week (52 payments per year)
+- **BIWEEKLY**: Payment due every two weeks (26 payments per year) - common for payroll-aligned loans
+- **SEMIMONTHLY**: Payment due twice per month (24 payments per year) - typically on specific dates like 1st and 15th
+- **MONTHLY**: Payment due every month (12 payments per year) - most common
+- **BIMONTHLY**: Payment due every two months (6 payments per year)
+- **QUARTERLY**: Payment due every quarter (4 payments per year) - common for business loans
+- **SEMIANNUALLY**: Payment due twice per year (2 payments per year)
+- **ANNUALLY**: Payment due once per year - common for agricultural or seasonal loans
 
 ### Compounding Frequency Enum
 
 Defines how often interest compounds:
 
-- **DAILY**: Daily compounding
-- **WEEKLY**: Weekly compounding
-- **MONTHLY**: Monthly compounding
-- **QUARTERLY**: Quarterly compounding
-- **SEMI_ANNUALLY**: Semi-annual compounding
-- **ANNUALLY**: Annual compounding
-- **CONTINUOUS**: Continuous compounding
+- **DAILY**: Interest compounds every day (365 or 360 times per year) - results in highest effective interest rate
+- **MONTHLY**: Interest compounds every month (12 times per year) - most common compounding frequency
+- **QUARTERLY**: Interest compounds every quarter (4 times per year)
+- **SEMIANNUALLY**: Interest compounds twice per year (2 times per year)
+- **ANNUALLY**: Interest compounds once per year - simplest compounding method
+- **CONTINUOUS**: Interest compounds continuously (mathematical limit as n approaches infinity)
 
 ### Day Count Convention Enum
 
 Defines how days are counted for interest calculations:
 
-- **ACTUAL_360**: Actual days / 360 (common in money markets)
-- **ACTUAL_365**: Actual days / 365 (common in bonds)
-- **ACTUAL_ACTUAL**: Actual days / actual days in year
-- **THIRTY_360**: 30 days per month / 360 days per year
-- **THIRTY_365**: 30 days per month / 365 days per year
-- **ACTUAL_365L**: Actual days / 365 or 366 in leap years
+- **ACTUAL_360**: Actual days / 360 - common for money market instruments and commercial loans (results in slightly higher interest than Actual/365)
+- **ACTUAL_365**: Actual days / 365 - common for corporate bonds and some loans (fixed denominator regardless of leap years)
+- **ACTUAL_ACTUAL**: Actual days / actual days in year - most accurate method, accounts for leap years (common for government bonds and mortgages)
+- **THIRTY_360**: 30 days per month / 360 days per year - simplifies calculations, common for corporate bonds (also known as "Bond Basis")
 
 ### Rebate Type Enum
 
@@ -972,6 +1102,16 @@ Defines notification delivery channels:
 - **IN_APP**: In-app notification
 - **MAIL**: Physical mail
 - **PHONE**: Phone call
+
+### Notification Status Enum
+
+Defines notification delivery statuses:
+
+- **PENDING**: Notification is pending delivery
+- **SENT**: Notification has been sent
+- **DELIVERED**: Notification was delivered successfully
+- **FAILED**: Notification delivery failed
+- **READ**: Notification was read/opened by recipient
 
 ### Accrual Type Enum
 
