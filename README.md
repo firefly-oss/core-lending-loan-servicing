@@ -1,7 +1,7 @@
 # Core Lending Loan Servicing Microservice
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://openjdk.java.net/projects/jdk/21/)
+[![Java](https://img.shields.io/badge/Java-25-orange.svg)](https://openjdk.java.net/projects/jdk/25/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-green.svg)](https://spring.io/projects/spring-boot)
 
 ## Overview
@@ -42,7 +42,7 @@ The microservice follows a clean, modular architecture with clear separation of 
 
 ## Technology Stack
 
-- **Java 21**: Latest LTS version with virtual threads support
+- **Java 25**: Latest LTS version with virtual threads support
 - **Spring Boot 3.x**: Modern Spring framework with native compilation support
 - **Spring WebFlux**: Reactive web framework for non-blocking I/O
 - **R2DBC**: Reactive database connectivity for PostgreSQL
@@ -1121,7 +1121,6 @@ Defines types of accruals:
 - **PENALTY**: Penalty accrual
 - **LATE_FEE**: Late fee accrual
 - **SERVICING_FEE**: Servicing fee accrual
-- **OTHER**: Other accrual types
 
 ### Reason Code Enum (Rate Changes)
 
@@ -1131,9 +1130,6 @@ Defines reasons for interest rate changes:
 - **RENEGOTIATION**: Negotiated rate change
 - **PENALTY**: Penalty rate applied
 - **PROMOTION**: Promotional rate applied
-- **MARKET_ADJUSTMENT**: Market-based adjustment
-- **REGULATORY**: Regulatory requirement
-- **OTHER**: Other reasons
 
 ### Event Type Enum
 
@@ -1144,12 +1140,6 @@ Defines types of servicing events:
 - **DEFERMENT**: Payment deferment
 - **COLLECTION_CALL**: Collection call made
 - **NOTICE**: Notice sent
-- **FORBEARANCE**: Forbearance granted
-- **MODIFICATION**: Loan modification
-- **ASSUMPTION**: Loan assumption
-- **RELEASE**: Lien release
-- **SUBORDINATION**: Subordination agreement
-- **OTHER**: Other events
 
 ### Payment Method Enum
 
@@ -1258,9 +1248,13 @@ The microservice provides comprehensive REST APIs documented with OpenAPI 3.0:
 |----------|-----------|-------------|
 | Loan Servicing Cases | `/api/v1/loan-servicing-cases` | Main loan servicing case management |
 | Disbursements | `/api/v1/loan-servicing-cases/{caseId}/disbursements` | Loan disbursement operations |
+| Disbursement Internal Transactions | `/api/v1/loan-servicing-cases/{caseId}/disbursements/{disbursementId}/internal-transactions` | Internal account-to-account disbursement transactions |
+| Disbursement External Transactions | `/api/v1/loan-servicing-cases/{caseId}/disbursements/{disbursementId}/external-transactions` | External PSP disbursement transactions |
 | Disbursement Plans | `/api/v1/loan-servicing-cases/{caseId}/disbursement-plans` | Staged disbursement schedules for construction loans |
 | Installment Plans | `/api/v1/loan-servicing-cases/{caseId}/installment-plans` | Planned installment schedule management |
 | Installment Records | `/api/v1/loan-servicing-cases/{caseId}/installment-records` | Actual payment tracking (internal/external) |
+| Repayment Schedules | `/api/v1/loan-servicing-cases/{caseId}/repayment-schedules` | Planned repayment schedule with amortization details |
+| Repayment Records | `/api/v1/loan-servicing-cases/{caseId}/repayment-records` | Actual repayment transaction tracking |
 | Balances | `/api/v1/loan-servicing-cases/{caseId}/balances` | Historical balance snapshots |
 | Accruals | `/api/v1/loan-servicing-cases/{caseId}/accruals` | Interest and fee accruals |
 | Rate Changes | `/api/v1/loan-servicing-cases/{caseId}/rate-changes` | Interest rate modifications |
@@ -1301,7 +1295,7 @@ core-lending-loan-servicing/
 
 ### Coding Standards
 
-- **Java 21 Features**: Utilize modern Java features including virtual threads, pattern matching, and records
+- **Java 25 Features**: Utilize modern Java features including virtual threads, pattern matching, and records
 - **Reactive Programming**: Use Project Reactor for non-blocking, asynchronous operations
 - **Validation**: All DTOs include comprehensive Jakarta validation annotations
 - **Documentation**: Document all public APIs with OpenAPI 3.0 annotations
