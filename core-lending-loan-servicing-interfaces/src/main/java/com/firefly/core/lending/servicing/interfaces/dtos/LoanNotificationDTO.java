@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.firefly.core.lending.servicing.interfaces.enums.NotificationChannelEnum;
 import com.firefly.core.lending.servicing.interfaces.enums.NotificationStatusEnum;
 import com.firefly.core.lending.servicing.interfaces.enums.NotificationTypeEnum;
-import com.firefly.core.utils.annotations.FilterableId;
+import org.fireflyframework.utils.annotations.FilterableId;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

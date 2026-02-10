@@ -19,7 +19,7 @@ package com.firefly.core.lending.servicing.interfaces.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.firefly.core.lending.servicing.interfaces.enums.ReasonCodeEnum;
-import com.firefly.core.utils.annotations.FilterableId;
+import org.fireflyframework.utils.annotations.FilterableId;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
