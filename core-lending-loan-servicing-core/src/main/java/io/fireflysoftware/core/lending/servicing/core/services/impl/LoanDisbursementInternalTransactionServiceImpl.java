@@ -1,0 +1,82 @@
+/*
+ * Copyright 2025 Firefly Software Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+package io.fireflysoftware.core.lending.servicing.core.services.impl;
+
+import org.fireflyframework.core.filters.FilterRequest;
+import org.fireflyframework.core.filters.FilterUtils;
+import org.fireflyframework.core.queries.PaginationResponse;
+import io.fireflysoftware.core.lending.servicing.core.mappers.LoanDisbursementInternalTransactionMapper;
+import io.fireflysoftware.core.lending.servicing.core.services.LoanDisbursementInternalTransactionService;
+import io.fireflysoftware.core.lending.servicing.interfaces.dtos.LoanDisbursementInternalTransactionDTO;
+import io.fireflysoftware.core.lending.servicing.models.entities.LoanDisbursementInternalTransaction;
+import io.fireflysoftware.core.lending.servicing.models.repositories.LoanDisbursementInternalTransactionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.util.UUID;
+
+@Service
+@Transactional
+public class LoanDisbursementInternalTransactionServiceImpl implements LoanDisbursementInternalTransactionService {
+
+    @Autowired
+    private LoanDisbursementInternalTransactionRepository repository;
+
+    @Autowired
+    private LoanDisbursementInternalTransactionMapper mapper;
+
+    @Override
+    public Mono<PaginationResponse<LoanDisbursementInternalTransactionDTO>> findAll(
+            UUID loanDisbursementId,
+            FilterRequest<LoanDisbursementInternalTransactionDTO> filterRequest) {
+        filterRequest.getFilters().setLoanDisbursementId(loanDisbursementId);
+        return FilterUtils.createFilter(
+                LoanDisbursementInternalTransaction.class,
+                mapper::toDTO
+        ).filter(filterRequest);
+    }
+
+    @Override
+    public Mono<LoanDisbursementInternalTransactionDTO> create(
+            UUID loanDisbursementId,
+            LoanDisbursementInternalTransactionDTO dto) {
+        dto.setLoanDisbursementId(loanDisbursementId);
+        LoanDisbursementInternalTransaction entity = mapper.toEntity(dto);
+        return repository.save(entity)
+                .map(mapper::toDTO);
+    }
+
+    @Override
+    public Mono<LoanDisbursementInternalTransactionDTO> getById(
+            UUID loanDisbursementId,
+            UUID transactionId) {
+        return repository.findById(transactionId)
+                .filter(entity -> loanDisbursementId.equals(entity.getLoanDisbursementId()))
+                .map(mapper::toDTO);
+    }
+
+    @Override
+    public Flux<LoanDisbursementInternalTransactionDTO> findByDisbursementId(UUID loanDisbursementId) {
+        return repository.findByLoanDisbursementId(loanDisbursementId)
+                .map(mapper::toDTO);
+    }
+}
+
