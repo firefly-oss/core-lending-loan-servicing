@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>core-lending-loan-servicing-interfaces</artifactId>
+    <name>core-lending-loan-servicing-interfaces</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

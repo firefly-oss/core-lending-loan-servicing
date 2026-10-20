@@ -12,6 +12,7 @@
     </parent>
 
     <artifactId>core-lending-loan-servicing</artifactId>
+    <name>core-lending-loan-servicing</name>
     <packaging>pom</packaging>
     <modules>
         <module>core-lending-loan-servicing-core</module>
