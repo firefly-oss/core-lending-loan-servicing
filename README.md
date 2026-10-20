@@ -11,7 +11,7 @@ The **Core Lending Loan Servicing Microservice** is a critical component of the 
 This service provides a complete loan lifecycle management system, handling everything from disbursements and repayment schedules to interest accruals, rate changes, and servicing events. It's designed with reactive programming principles using Spring WebFlux and R2DBC for high-performance, non-blocking operations.
 
 **Organization**: [firefly-oss](https://github.com/firefly-oss)
-**Website**: [getfirefly.io](https://getfirefly.io)
+**Website**: [fireflysoftware.io](https://fireflysoftware.io)
 **License**: Apache 2.0
 
 ## Architecture
@@ -1240,7 +1240,7 @@ Defines disbursement processing status:
 The microservice provides comprehensive REST APIs documented with OpenAPI 3.0:
 
 - **Local Environment**: http://localhost:8080/swagger-ui.html
-- **Development Environment**: http://core.getfirefly.io/loan-servicing/swagger-ui.html
+- **Development Environment**: https://openplatform.fireflysoftware.io/loan-servicing/swagger-ui.html
 
 ### API Endpoints Overview
 
@@ -1382,8 +1382,8 @@ spring:
 ### Development Environment
 
 The service is deployed in the development environment at:
-- **Base URL**: http://core.getfirefly.io/loan-servicing
-- **API Docs**: http://core.getfirefly.io/loan-servicing/swagger-ui.html
+- **Base URL**: https://openplatform.fireflysoftware.io/loan-servicing
+- **API Docs**: https://openplatform.fireflysoftware.io/loan-servicing/swagger-ui.html
 
 ### Production Deployment
 
@@ -1453,10 +1453,10 @@ limitations under the License.
 
 ## Support and Contact
 
-- **Website**: [getfirefly.io](https://getfirefly.io)
+- **Website**: [fireflysoftware.io](https://fireflysoftware.io)
 - **GitHub Organization**: [firefly-oss](https://github.com/firefly-oss)
-- **Documentation**: [docs.getfirefly.io](https://docs.getfirefly.io)
-- **Community**: [community.getfirefly.io](https://community.getfirefly.io)
+- **Documentation**: [docs.fireflysoftware.io](https://docs.fireflysoftware.io)
+- **Community**: [community.fireflysoftware.io](https://community.fireflysoftware.io)
 
 ---
 
