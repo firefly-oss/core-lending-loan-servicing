@@ -23,6 +23,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -36,7 +38,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table("loan_repayment_schedule")
-public class LoanRepaymentSchedule {
+public class LoanRepaymentSchedule implements Persistable<UUID> {
 
     @Id
     @Column("loan_repayment_schedule_id")
@@ -83,4 +85,25 @@ public class LoanRepaymentSchedule {
 
     @Column("updated_at")
     private LocalDateTime updatedAt;
+
+    /** True only for a row that has not been inserted. A preset id would otherwise be treated as an update. */
+    @Transient
+    private boolean insert;
+
+    @Override
+    public UUID getId() {
+        return loanRepaymentScheduleId;
+    }
+
+    @Override
+    public boolean isNew() {
+        return insert;
+    }
+
+    public void markNew() {
+        if (loanRepaymentScheduleId == null) {
+            loanRepaymentScheduleId = UUID.randomUUID();
+        }
+        insert = true;
+    }
 }

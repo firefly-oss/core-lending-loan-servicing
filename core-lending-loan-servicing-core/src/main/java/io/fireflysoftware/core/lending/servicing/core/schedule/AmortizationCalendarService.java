@@ -109,7 +109,7 @@ public class AmortizationCalendarService {
 
     private static LoanRepaymentSchedule newRow(UUID caseId, AmortizationCalendarCalculator.Installment row) {
         LocalDateTime now = LocalDateTime.now();
-        return LoanRepaymentSchedule.builder()
+        LoanRepaymentSchedule entity = LoanRepaymentSchedule.builder()
                 .loanRepaymentScheduleId(UUID.randomUUID())
                 .loanServicingCaseId(caseId)
                 .installmentNumber(row.number())
@@ -124,6 +124,8 @@ public class AmortizationCalendarService {
                 .createdAt(now)
                 .updatedAt(now)
                 .build();
+        entity.markNew();
+        return entity;
     }
 
     private LoanRepaymentScheduleDTO toDto(LoanRepaymentSchedule row) {
