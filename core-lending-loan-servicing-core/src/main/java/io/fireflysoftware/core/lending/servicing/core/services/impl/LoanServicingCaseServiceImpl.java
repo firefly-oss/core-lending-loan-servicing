@@ -23,6 +23,7 @@ import org.fireflyframework.core.queries.PaginationResponse;
 import io.fireflysoftware.core.lending.servicing.core.mappers.LoanServicingCaseMapper;
 import io.fireflysoftware.core.lending.servicing.core.services.LoanServicingCaseService;
 import io.fireflysoftware.core.lending.servicing.interfaces.dtos.LoanServicingCaseDTO;
+import io.fireflysoftware.core.lending.servicing.interfaces.enums.ServicingStatusEnum;
 import io.fireflysoftware.core.lending.servicing.models.entities.LoanServicingCase;
 import io.fireflysoftware.core.lending.servicing.models.repositories.LoanServicingCaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,9 @@ public class LoanServicingCaseServiceImpl implements LoanServicingCaseService {
     @Override
     public Mono<LoanServicingCaseDTO> create(LoanServicingCaseDTO dto) {
         LoanServicingCase entity = mapper.toEntity(dto);
+        if (entity.getServicingStatus() == null) {
+            entity.setServicingStatus(ServicingStatusEnum.PENDING);
+        }
         return repository.save(entity)
                 .map(mapper::toDTO);
     }
@@ -67,8 +71,19 @@ public class LoanServicingCaseServiceImpl implements LoanServicingCaseService {
     public Mono<LoanServicingCaseDTO> update(UUID loanServicingCaseId, LoanServicingCaseDTO dto) {
         return repository.findById(loanServicingCaseId)
                 .flatMap(existingEntity -> {
+                    ServicingStatusEnum current = existingEntity.getServicingStatus() != null
+                            ? existingEntity.getServicingStatus()
+                            : ServicingStatusEnum.PENDING;
                     LoanServicingCase updatedEntity = mapper.toEntity(dto);
                     updatedEntity.setLoanServicingCaseId(existingEntity.getLoanServicingCaseId());
+                    if (updatedEntity.getServicingStatus() == null) {
+                        updatedEntity.setServicingStatus(current);
+                    }
+                    if (!ServicingLifecycle.canTransition(current, updatedEntity.getServicingStatus())) {
+                        return Mono.error(new IllegalStateException(
+                                "Loan servicing case " + loanServicingCaseId + " cannot move from " + current
+                                        + " to " + updatedEntity.getServicingStatus()));
+                    }
                     return repository.save(updatedEntity);
                 })
                 .map(mapper::toDTO);
@@ -76,6 +91,17 @@ public class LoanServicingCaseServiceImpl implements LoanServicingCaseService {
 
     @Override
     public Mono<Void> delete(UUID loanServicingCaseId) {
-        return repository.deleteById(loanServicingCaseId);
+        return repository.findById(loanServicingCaseId)
+                .flatMap(existing -> {
+                    ServicingStatusEnum status = existing.getServicingStatus() != null
+                            ? existing.getServicingStatus()
+                            : ServicingStatusEnum.PENDING;
+                    if (status != ServicingStatusEnum.PENDING) {
+                        return Mono.error(new IllegalStateException(
+                                "Loan servicing case " + loanServicingCaseId + " is " + status
+                                        + " and cannot be deleted; close it so the servicing history is kept"));
+                    }
+                    return repository.deleteById(loanServicingCaseId);
+                });
     }
 }
