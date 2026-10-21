@@ -1,9 +1,9 @@
 <a href="https://fireflysoftware.io/openplatform/">
 <picture>
-  <source media="(max-width: 640px) and (prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/firefly-oss/.github/main/profile/assets/banner-narrow-dark.svg">
-  <source media="(max-width: 640px)" srcset="https://raw.githubusercontent.com/firefly-oss/.github/main/profile/assets/banner-narrow-light.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/firefly-oss/.github/main/profile/assets/banner-dark.svg">
-  <img src="https://raw.githubusercontent.com/firefly-oss/.github/main/profile/assets/banner-light.svg" alt="Firefly OpenPlatform - Core Lending - Loan Servicing" width="100%">
+  <source media="(max-width: 640px) and (prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/fireflysoftwaresolutions/.github/main/profile/assets/banner-narrow-dark.svg">
+  <source media="(max-width: 640px)" srcset="https://raw.githubusercontent.com/fireflysoftwaresolutions/.github/main/profile/assets/banner-narrow-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/fireflysoftwaresolutions/.github/main/profile/assets/banner-dark.svg">
+  <img src="https://raw.githubusercontent.com/fireflysoftwaresolutions/.github/main/profile/assets/banner-light.svg" alt="Firefly OpenPlatform - Core Lending - Loan Servicing" width="100%">
 </picture>
 </a>
 
@@ -916,6 +916,8 @@ Tracks the complete lifecycle of a loan servicing case:
 - **CLOSED**: Loan account closed
 - **TRANSFERRED**: Loan transferred to another servicer
 - **CANCELLED**: Loan cancelled before activation
+
+A case follows those statuses. `PENDING` may become `ACTIVE` or `CANCELLED`. `ACTIVE` may move to `GRACE_PERIOD`, `DELINQUENT`, `FORBEARANCE`, `RESTRUCTURED`, `BANKRUPTCY`, `FORECLOSURE`, `PAID_OFF`, `CLOSED`, `TRANSFERRED`, `CANCELLED`, or `DEFAULT`. `GRACE_PERIOD` may return to `ACTIVE` or move to `DELINQUENT` or `FORBEARANCE`. `DELINQUENT` may return to `ACTIVE` or move to `DEFAULT`, `FORBEARANCE`, or `GRACE_PERIOD`. `DEFAULT` may move to `FORECLOSURE`, `BANKRUPTCY`, `CHARGED_OFF`, `FORBEARANCE`, or `RESTRUCTURED`. `FORBEARANCE` may return to `ACTIVE` or move to `DELINQUENT` or `RESTRUCTURED`. `RESTRUCTURED` may return to `ACTIVE` or move to `DELINQUENT`. `BANKRUPTCY` may move to `CHARGED_OFF`, `ACTIVE`, or `CLOSED`. `FORECLOSURE` may move to `CHARGED_OFF` or `CLOSED`. `CHARGED_OFF` may move to `CLOSED`. `PAID_OFF` may move to `CLOSED`. `CLOSED`, `TRANSFERRED`, and `CANCELLED` stay on file. Only a `PENDING` case can be removed. Close a case that has left pending so the servicing history stays on file.
 
 ### Interest Calculation Method Enum
 
