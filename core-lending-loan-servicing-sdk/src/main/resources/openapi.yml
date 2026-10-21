@@ -14,6 +14,8 @@ tags:
   description: Operations for Loan Repayment Records
 - name: LoanRepaymentSchedule
   description: Operations for Loan Repayment Schedules
+- name: SyndicatedFacility
+  description: "Syndicated facility, participants, drawdowns, and repayment allocation"
 - name: Loan Notification
   description: "Manage loan notifications sent to parties via email, SMS, push, in-app,\
     \ mail, or phone"
@@ -121,6 +123,124 @@ paths:
         in: header
         description: "Unique key for idempotent requests. If provided, ensures that\
           \ identical requests with the same key will only be processed once."
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+  /api/v1/loan-servicing-cases/{caseId}/syndicated-facilities/{facilityId}/repayment-allocations/{allocationId}/payment:
+    put:
+      tags:
+      - SyndicatedFacility
+      summary: Record the payment id accepted for an allocation
+      operationId: attachPayment
+      parameters:
+      - name: caseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: facilityId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: allocationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AttachFacilityPaymentRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/FacilityAllocationDTO"
+  /api/v1/loan-servicing-cases/{caseId}/syndicated-facilities/{facilityId}/participants/{participantId}:
+    put:
+      tags:
+      - SyndicatedFacility
+      summary: Update a participant
+      operationId: updateParticipant
+      parameters:
+      - name: caseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: facilityId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: participantId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FacilityParticipantDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/FacilityParticipantDTO"
+    delete:
+      tags:
+      - SyndicatedFacility
+      summary: Remove a participant
+      operationId: deleteParticipant
+      parameters:
+      - name: caseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: facilityId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: participantId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
         required: false
         schema:
           type: string
@@ -1634,6 +1754,274 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/LoanServicingCaseDTO"
+  /api/v1/loan-servicing-cases/{caseId}/syndicated-facilities:
+    get:
+      tags:
+      - SyndicatedFacility
+      summary: List syndicated facilities on a servicing case
+      operationId: listSyndicatedFacilities
+      parameters:
+      - name: caseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SyndicatedFacilityDTO"
+    post:
+      tags:
+      - SyndicatedFacility
+      summary: Open a syndicated facility on a servicing case
+      operationId: open
+      parameters:
+      - name: caseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SyndicatedFacilityDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SyndicatedFacilityDTO"
+  /api/v1/loan-servicing-cases/{caseId}/syndicated-facilities/{facilityId}/status-restores/{historyId}:
+    post:
+      tags:
+      - SyndicatedFacility
+      summary: Restore the facility status recorded in a history row
+      operationId: restore
+      parameters:
+      - name: caseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: facilityId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: historyId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SyndicatedFacilityDTO"
+  /api/v1/loan-servicing-cases/{caseId}/syndicated-facilities/{facilityId}/repayment-allocations:
+    post:
+      tags:
+      - SyndicatedFacility
+      summary: Allocate a repayment across participants by share
+      operationId: allocate
+      parameters:
+      - name: caseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: facilityId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AllocateFacilityRepaymentRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/FacilityAllocationDTO"
+  /api/v1/loan-servicing-cases/{caseId}/syndicated-facilities/{facilityId}/participants:
+    get:
+      tags:
+      - SyndicatedFacility
+      summary: List participants on a facility
+      operationId: listParticipants
+      parameters:
+      - name: caseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: facilityId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FacilityParticipantDTO"
+    post:
+      tags:
+      - SyndicatedFacility
+      summary: Add a participant
+      operationId: addParticipant
+      parameters:
+      - name: caseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: facilityId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FacilityParticipantDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/FacilityParticipantDTO"
+  /api/v1/loan-servicing-cases/{caseId}/syndicated-facilities/{facilityId}/drawdowns:
+    post:
+      tags:
+      - SyndicatedFacility
+      summary: Draw the facility through the existing disbursement
+      operationId: draw
+      parameters:
+      - name: caseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: facilityId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoanDisbursementDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/LoanDisbursementDTO"
+  /api/v1/loan-servicing-cases/{caseId}/syndicated-facilities/{facilityId}/closures:
+    post:
+      tags:
+      - SyndicatedFacility
+      summary: Close a syndicated facility
+      operationId: close
+      parameters:
+      - name: caseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: facilityId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SyndicatedFacilityDTO"
   /api/v1/loan-servicing-cases/{caseId}/restructurings:
     get:
       tags:
@@ -2738,6 +3126,63 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/LoanAccrualDTO"
+  /api/v1/loan-servicing-cases/{caseId}/syndicated-facilities/{facilityId}:
+    get:
+      tags:
+      - SyndicatedFacility
+      summary: Read a syndicated facility
+      operationId: get
+      parameters:
+      - name: caseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: facilityId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SyndicatedFacilityDTO"
+    delete:
+      tags:
+      - SyndicatedFacility
+      summary: Delete a syndicated facility and its participants
+      operationId: delete
+      parameters:
+      - name: caseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: facilityId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
   /api/v1/loan-servicing-cases/{caseId}/disbursements/{disbursementId}/internal-transactions/{transactionId}:
     get:
       tags:
@@ -2843,6 +3288,39 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/LoanBalanceDTO"
+  /api/v1/loan-servicing-cases/{caseId}/syndicated-facilities/{facilityId}/repayment-allocations/{allocationId}:
+    delete:
+      tags:
+      - SyndicatedFacility
+      summary: Delete a repayment allocation
+      operationId: deleteAllocation
+      parameters:
+      - name: caseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: facilityId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: allocationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
 components:
   schemas:
     LoanServicingCaseDTO:
@@ -2975,6 +3453,79 @@ components:
         updatedAt:
           type: string
           format: date-time
+    AttachFacilityPaymentRequest:
+      type: object
+      properties:
+        paymentId:
+          type: string
+          format: uuid
+    FacilityAllocationDTO:
+      type: object
+      properties:
+        allocationId:
+          type: string
+          format: uuid
+        facilityId:
+          type: string
+          format: uuid
+        loanRepaymentRecordId:
+          type: string
+          format: uuid
+        paymentAmount:
+          type: number
+        unallocatedAmount:
+          type: number
+        currency:
+          type: string
+        paymentId:
+          type: string
+          format: uuid
+        lines:
+          type: array
+          items:
+            $ref: "#/components/schemas/FacilityAllocationLineDTO"
+    FacilityAllocationLineDTO:
+      type: object
+      properties:
+        lineId:
+          type: string
+          format: uuid
+        participantId:
+          type: string
+          format: uuid
+        partyId:
+          type: string
+          format: uuid
+        role:
+          type: string
+          enum:
+          - AGENT
+          - LENDER
+        sharePercent:
+          type: number
+        allocatedAmount:
+          type: number
+        currency:
+          type: string
+    FacilityParticipantDTO:
+      type: object
+      properties:
+        participantId:
+          type: string
+          format: uuid
+        facilityId:
+          type: string
+          format: uuid
+        partyId:
+          type: string
+          format: uuid
+        sharePercent:
+          type: number
+        role:
+          type: string
+          enum:
+          - AGENT
+          - LENDER
     LoanRestructuringDTO:
       required:
       - loanServicingCaseId
@@ -3833,6 +4384,9 @@ components:
           maxLength: 500
           minLength: 0
           type: string
+        facilityId:
+          type: string
+          format: uuid
         createdAt:
           type: string
           format: date-time
@@ -3970,6 +4524,37 @@ components:
         updatedAt:
           type: string
           format: date-time
+    SyndicatedFacilityDTO:
+      type: object
+      properties:
+        facilityId:
+          type: string
+          format: uuid
+        loanServicingCaseId:
+          type: string
+          format: uuid
+        originationFacilityId:
+          type: string
+          format: uuid
+        currency:
+          type: string
+        commitmentAmount:
+          type: number
+        status:
+          type: string
+          enum:
+          - OPEN
+          - CLOSED
+    AllocateFacilityRepaymentRequest:
+      type: object
+      properties:
+        loanRepaymentRecordId:
+          type: string
+          format: uuid
+        paymentAmount:
+          type: number
+        currency:
+          type: string
     LoanDisbursementInternalTransactionDTO:
       required:
       - destinationAccountId

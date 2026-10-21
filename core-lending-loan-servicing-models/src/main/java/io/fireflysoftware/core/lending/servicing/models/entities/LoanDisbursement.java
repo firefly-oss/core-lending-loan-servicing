@@ -82,6 +82,13 @@ public class LoanDisbursement {
     @Column("note")
     private String note;
 
+    /**
+     * Syndicated facility this drawdown draws. Null for a loan that is not syndicated.
+     * Same-core reference stored as a UUID; the facility row is not a second loan master.
+     */
+    @Column("facility_id")
+    private UUID facilityId;
+
     @Column("created_at")
     private LocalDateTime createdAt;
 

@@ -84,6 +84,9 @@ public class LoanDisbursementDTO {
     @Size(max = 500, message = "Note cannot exceed 500 characters")
     private String note;
 
+    @FilterableId
+    private UUID facilityId;
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime createdAt;
 
