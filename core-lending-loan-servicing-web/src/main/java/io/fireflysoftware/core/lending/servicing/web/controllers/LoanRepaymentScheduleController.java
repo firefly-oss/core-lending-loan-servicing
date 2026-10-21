@@ -19,8 +19,12 @@ package io.fireflysoftware.core.lending.servicing.web.controllers;
 
 import org.fireflyframework.core.filters.FilterRequest;
 import org.fireflyframework.core.queries.PaginationResponse;
+import io.fireflysoftware.core.lending.servicing.core.schedule.AmortizationCalendarService;
 import io.fireflysoftware.core.lending.servicing.core.services.LoanRepaymentScheduleService;
 import io.fireflysoftware.core.lending.servicing.interfaces.dtos.LoanRepaymentScheduleDTO;
+import io.fireflysoftware.core.lending.servicing.interfaces.dtos.RestoreScheduleRequest;
+import io.fireflysoftware.core.lending.servicing.interfaces.dtos.ScheduleRevisionDTO;
+import io.fireflysoftware.core.lending.servicing.interfaces.dtos.StoreAmortizationCalendarRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -29,6 +33,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -38,6 +43,39 @@ import java.util.UUID;
 public class LoanRepaymentScheduleController {
 
     private final LoanRepaymentScheduleService service;
+    private final AmortizationCalendarService calendars;
+
+    @PostMapping("/calendar")
+    @Operation(summary = "Store the amortization calendar for a servicing case")
+    public Mono<ResponseEntity<List<LoanRepaymentScheduleDTO>>> storeCalendar(
+            @PathVariable("caseId") UUID loanServicingCaseId,
+            @Valid @RequestBody StoreAmortizationCalendarRequest request) {
+        return calendars.store(loanServicingCaseId, request).map(ResponseEntity::ok);
+    }
+
+    @GetMapping("/calendar")
+    @Operation(summary = "Read the amortization calendar for a servicing case")
+    public Mono<ResponseEntity<List<LoanRepaymentScheduleDTO>>> readCalendar(
+            @PathVariable("caseId") UUID loanServicingCaseId,
+            @RequestParam(name = "includeSuperseded", defaultValue = "false") boolean includeSuperseded) {
+        return calendars.read(loanServicingCaseId, includeSuperseded).map(ResponseEntity::ok);
+    }
+
+    @PostMapping("/calendar/replacements")
+    @Operation(summary = "Replace the remaining schedule and keep the previous rows")
+    public Mono<ResponseEntity<ScheduleRevisionDTO>> replaceCalendar(
+            @PathVariable("caseId") UUID loanServicingCaseId,
+            @Valid @RequestBody StoreAmortizationCalendarRequest request) {
+        return calendars.replace(loanServicingCaseId, request).map(ResponseEntity::ok);
+    }
+
+    @PostMapping("/calendar/restore")
+    @Operation(summary = "Restore the previous schedule on the same servicing case")
+    public Mono<ResponseEntity<List<LoanRepaymentScheduleDTO>>> restoreCalendar(
+            @PathVariable("caseId") UUID loanServicingCaseId,
+            @Valid @RequestBody RestoreScheduleRequest request) {
+        return calendars.restore(loanServicingCaseId, request).map(ResponseEntity::ok);
+    }
 
     @GetMapping
     @Operation(summary = "List/Search repayment schedules for a servicing case")

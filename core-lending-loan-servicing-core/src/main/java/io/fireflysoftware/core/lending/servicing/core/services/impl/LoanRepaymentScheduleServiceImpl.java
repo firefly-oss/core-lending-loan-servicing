@@ -21,15 +21,19 @@ import org.fireflyframework.core.filters.FilterRequest;
 import org.fireflyframework.core.filters.FilterUtils;
 import org.fireflyframework.core.queries.PaginationResponse;
 import io.fireflysoftware.core.lending.servicing.core.mappers.LoanRepaymentScheduleMapper;
+import io.fireflysoftware.core.lending.servicing.core.schedule.AmortizationCalendarCalculator;
 import io.fireflysoftware.core.lending.servicing.core.services.LoanRepaymentScheduleService;
 import io.fireflysoftware.core.lending.servicing.interfaces.dtos.LoanRepaymentScheduleDTO;
+import io.fireflysoftware.core.lending.servicing.interfaces.enums.ScheduleStatus;
 import io.fireflysoftware.core.lending.servicing.models.entities.LoanRepaymentSchedule;
 import io.fireflysoftware.core.lending.servicing.models.repositories.LoanRepaymentScheduleRepository;
+import io.fireflysoftware.core.lending.servicing.models.repositories.LoanServicingCaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Service
@@ -38,6 +42,9 @@ public class LoanRepaymentScheduleServiceImpl implements LoanRepaymentScheduleSe
 
     @Autowired
     private LoanRepaymentScheduleRepository repository;
+
+    @Autowired
+    private LoanServicingCaseRepository cases;
 
     @Autowired
     private LoanRepaymentScheduleMapper mapper;
@@ -55,7 +62,10 @@ public class LoanRepaymentScheduleServiceImpl implements LoanRepaymentScheduleSe
     public Mono<LoanRepaymentScheduleDTO> create(UUID loanServicingCaseId, LoanRepaymentScheduleDTO dto) {
         dto.setLoanServicingCaseId(loanServicingCaseId);
         LoanRepaymentSchedule entity = mapper.toEntity(dto);
-        return Mono.just(entity)
+        if (entity.getScheduleStatus() == null) {
+            entity.setScheduleStatus(ScheduleStatus.CURRENT);
+        }
+        return applyRemainingBalance(entity)
                 .flatMap(repository::save)
                 .map(mapper::toDTO);
     }
@@ -75,6 +85,12 @@ public class LoanRepaymentScheduleServiceImpl implements LoanRepaymentScheduleSe
                     LoanRepaymentSchedule updatedEntity = mapper.toEntity(dto);
                     updatedEntity.setLoanRepaymentScheduleId(loanRepaymentScheduleId);
                     updatedEntity.setLoanServicingCaseId(loanServicingCaseId);
+                    if (updatedEntity.getRemainingBalance() == null) {
+                        updatedEntity.setRemainingBalance(existingEntity.getRemainingBalance());
+                    }
+                    if (updatedEntity.getScheduleStatus() == null) {
+                        updatedEntity.setScheduleStatus(existingEntity.getScheduleStatus());
+                    }
                     return repository.save(updatedEntity);
                 })
                 .map(mapper::toDTO);
@@ -85,5 +101,29 @@ public class LoanRepaymentScheduleServiceImpl implements LoanRepaymentScheduleSe
         return repository.findById(loanRepaymentScheduleId)
                 .filter(entity -> entity.getLoanServicingCaseId().equals(loanServicingCaseId))
                 .flatMap(repository::delete);
+    }
+
+    private Mono<LoanRepaymentSchedule> applyRemainingBalance(LoanRepaymentSchedule entity) {
+        if (entity.getRemainingBalance() != null) {
+            return Mono.just(entity);
+        }
+        return cases.findById(entity.getLoanServicingCaseId())
+                .flatMap(loan -> repository.findByLoanServicingCaseId(entity.getLoanServicingCaseId())
+                        .filter(row -> row.getScheduleStatus() != ScheduleStatus.SUPERSEDED)
+                        .filter(row -> row.getInstallmentNumber() != null
+                                && entity.getInstallmentNumber() != null
+                                && row.getInstallmentNumber() < entity.getInstallmentNumber())
+                        .map(row -> row.getPrincipalDue() == null ? BigDecimal.ZERO : row.getPrincipalDue())
+                        .reduce(BigDecimal.ZERO, BigDecimal::add)
+                        .map(prior -> {
+                            entity.setRemainingBalance(AmortizationCalendarCalculator.remaining(
+                                    loan.getPrincipalAmount(), prior, entity.getPrincipalDue()));
+                            return entity;
+                        }))
+                .switchIfEmpty(Mono.fromSupplier(() -> {
+                    entity.setRemainingBalance(AmortizationCalendarCalculator.remaining(
+                            BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO));
+                    return entity;
+                }));
     }
 }

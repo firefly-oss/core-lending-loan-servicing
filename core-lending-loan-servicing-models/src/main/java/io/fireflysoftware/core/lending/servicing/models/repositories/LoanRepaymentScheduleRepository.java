@@ -18,8 +18,11 @@
 package io.fireflysoftware.core.lending.servicing.models.repositories;
 
 import io.fireflysoftware.core.lending.servicing.models.entities.LoanRepaymentSchedule;
+import reactor.core.publisher.Flux;
 
 import java.util.UUID;
 
 public interface LoanRepaymentScheduleRepository extends BaseRepository<LoanRepaymentSchedule, UUID> {
+
+    Flux<LoanRepaymentSchedule> findByLoanServicingCaseId(UUID loanServicingCaseId);
 }

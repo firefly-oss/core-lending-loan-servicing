@@ -17,6 +17,7 @@
 
 package io.fireflysoftware.core.lending.servicing.models.entities;
 
+import io.fireflysoftware.core.lending.servicing.interfaces.enums.ScheduleStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -61,6 +62,12 @@ public class LoanRepaymentSchedule {
 
     @Column("total_due")
     private BigDecimal totalDue;
+
+    @Column("remaining_balance")
+    private BigDecimal remainingBalance;
+
+    @Column("schedule_status")
+    private ScheduleStatus scheduleStatus;
 
     @Column("is_paid")
     private Boolean isPaid;

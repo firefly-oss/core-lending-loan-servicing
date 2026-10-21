@@ -18,6 +18,7 @@
 package io.fireflysoftware.core.lending.servicing.interfaces.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.fireflysoftware.core.lending.servicing.interfaces.enums.ScheduleStatus;
 import org.fireflyframework.utils.annotations.FilterableId;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -69,6 +70,12 @@ public class LoanRepaymentScheduleDTO {
     @DecimalMin(value = "0.0", message = "Total due cannot be negative")
     @Digits(integer = 15, fraction = 2, message = "Total due must have at most 15 integer digits and 2 decimal places")
     private BigDecimal totalDue;
+
+    @DecimalMin(value = "0.0", message = "Remaining balance cannot be negative")
+    @Digits(integer = 15, fraction = 2, message = "Remaining balance must have at most 15 integer digits and 2 decimal places")
+    private BigDecimal remainingBalance;
+
+    private ScheduleStatus scheduleStatus;
 
     @NotNull(message = "Paid flag is required")
     private Boolean isPaid;

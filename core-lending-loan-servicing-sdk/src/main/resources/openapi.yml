@@ -3744,6 +3744,15 @@ components:
           minimum: 0.0
           exclusiveMinimum: false
           type: number
+        remainingBalance:
+          minimum: 0.0
+          exclusiveMinimum: false
+          type: number
+        scheduleStatus:
+          type: string
+          enum:
+          - CURRENT
+          - SUPERSEDED
         isPaid:
           type: boolean
         paidDate:
