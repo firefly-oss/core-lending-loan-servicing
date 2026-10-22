@@ -2086,6 +2086,135 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/LoanRestructuringDTO"
+  /api/v1/loan-servicing-cases/{caseId}/repayment-schedules/calendar:
+    post:
+      tags:
+      - LoanRepaymentSchedule
+      summary: Store the amortization calendar for a servicing case
+      operationId: storeCalendar
+      parameters:
+      - name: caseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StoreAmortizationCalendarRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LoanRepaymentScheduleDTO"
+    get:
+      tags:
+      - LoanRepaymentSchedule
+      summary: Read the amortization calendar for a servicing case
+      operationId: readCalendar
+      parameters:
+      - name: caseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: includeSuperseded
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: X-Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LoanRepaymentScheduleDTO"
+  /api/v1/loan-servicing-cases/{caseId}/repayment-schedules/calendar/replacements:
+    post:
+      tags:
+      - LoanRepaymentSchedule
+      summary: Replace the remaining schedule and keep the previous rows
+      operationId: replaceCalendar
+      parameters:
+      - name: caseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StoreAmortizationCalendarRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ScheduleRevisionDTO"
+  /api/v1/loan-servicing-cases/{caseId}/repayment-schedules/calendar/restore:
+    post:
+      tags:
+      - LoanRepaymentSchedule
+      summary: Restore the previous schedule on the same servicing case
+      operationId: restoreCalendar
+      parameters:
+      - name: caseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: X-Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RestoreScheduleRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LoanRepaymentScheduleDTO"
   /api/v1/loan-servicing-cases/{caseId}/repayment-schedules:
     get:
       tags:
@@ -3768,6 +3897,62 @@ components:
         updatedAt:
           type: string
           format: date-time
+    StoreAmortizationCalendarRequest:
+      required:
+      - annualRatePercent
+      - firstDueDate
+      - paymentFrequency
+      - principal
+      - term
+      type: object
+      properties:
+        principal:
+          type: number
+        annualRatePercent:
+          type: number
+        term:
+          type: integer
+          format: int32
+          minimum: 1
+        paymentFrequency:
+          type: string
+        amortizationMethod:
+          type: string
+        firstDueDate:
+          type: string
+          format: date
+        installmentAmount:
+          type: number
+    ScheduleRevisionDTO:
+      type: object
+      properties:
+        loanServicingCaseId:
+          type: string
+          format: uuid
+        previous:
+          type: array
+          items:
+            $ref: "#/components/schemas/LoanRepaymentScheduleDTO"
+        current:
+          type: array
+          items:
+            $ref: "#/components/schemas/LoanRepaymentScheduleDTO"
+    RestoreScheduleRequest:
+      required:
+      - previousScheduleIds
+      - replacementScheduleIds
+      type: object
+      properties:
+        previousScheduleIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        replacementScheduleIds:
+          type: array
+          items:
+            type: string
+            format: uuid
     LoanRepaymentRecordDTO:
       required:
       - isPartialPayment
